@@ -1,8 +1,41 @@
-import React from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { Button, Container, Form, Nav, Navbar } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
 import logo from '../../assets/images/logo.png'
+import { apiUrl } from './Http'
+import { CartContext } from '../context/Cart'
 const Navbars = () => {
+  const [categories,setCategories]=useState([]);
+  const {getQty,cartData}=useContext(CartContext);
+
+
+    const fetchCategories=async()=>{
+      await fetch(apiUrl+'/get-categories',{
+            method:'GET',
+            headers:{
+              'Content-type':'application/json',
+              'Accept':'application/json',
+            }
+          }).then(res=>res.json())
+          .then(result=>{
+            if(result.status==200){
+              setCategories(result.data);
+              console.log(result.data);
+              
+            }
+            else{
+              console.log('Something went wrong');
+              
+            }
+            
+          })
+    }
+    useEffect(() => {
+      fetchCategories();
+    
+   
+    }, [])
+    
   return (
     <header className='shadow'>
   <div className="bg-dark text-center py-3 ">
@@ -21,18 +54,26 @@ const Navbars = () => {
             style={{ maxHeight: '300px' }}
             navbarScroll
           >
-           
-
             <Link className='link' to={'/'}>Home</Link>
             <Link className='link'  to={'/shop'}>Shop</Link>
             <Link className='link' to={'/shop'}>Contact</Link>
+           
+            {
+              categories && categories.map(category=>{
+                return(
+                  <Link key={`cat-nav-${category.id}`} className='link' to={`/shop?category=${category.id}`}>{category.name}</Link>
+                )
+              })
+            }
+            
           <div className='nav-right d-flex'>
           <Link to={'/admin/dashboard'}>
-          <i class="bi bi-person fs-4"></i>
+          <i className="bi bi-person fs-4"></i>
 
           </Link>
-          <Link to={'/cart'} className='ms-3'>
-          <i  class="bi bi-cart3 fs-4"></i>
+          <Link to={'/cart'} className='ms-3 card-bucket'>
+          <span>{getQty()}</span>
+          <i  className="bi bi-cart3 fs-4"></i>
           
           </Link>
 

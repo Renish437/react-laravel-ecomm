@@ -14,7 +14,8 @@ class TempImageController extends Controller
     public function store(Request $request){
 
         $validator=Validator::make(request()->all(),[
-            'image'=> 'required|image|mimes:jpeg,png,jpg,gif',
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:5120', // 10MB
+  //5MB Image can load
         ]);
 
         if($validator->fails()){
@@ -45,7 +46,8 @@ $img->save(public_path('uploads/temp/thumb/'.$imageName));
         return response()->json([
             'status'=> 200,
             'message'=> 'Temp Image added successfully',
-            'data'=> $tempImage
+            'data'=> $tempImage,
+            'id'=>$tempImage->id
         ],200);
 
     }

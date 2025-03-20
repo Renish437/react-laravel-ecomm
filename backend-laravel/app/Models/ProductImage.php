@@ -7,4 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 class ProductImage extends Model
 {
     //
+    protected $appends=['image_url'];
+    public function getImageUrlAttribute(){
+        if($this->image==""){
+           return "";
+        }
+        return asset('/uploads/products/smallThumb/'.$this->image);
+       }
 }

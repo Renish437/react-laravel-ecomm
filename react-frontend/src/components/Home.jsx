@@ -10,7 +10,7 @@ import HeroSection from './HeroSection/HeroSection';
 // import Slider2Img from "../assets/images/ecomm-banner-2.webp"
 const Home = () => {
   return (
-    <main className='motion-preset-slide-right motion-delay-500'>
+    <main className='section-1 motion-preset-slide-right motion-delay-500'>
 
  
 

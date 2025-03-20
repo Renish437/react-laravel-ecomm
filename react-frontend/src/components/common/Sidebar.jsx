@@ -22,7 +22,7 @@ const Sidebar = () => {
     <Link className='link' to={'/admin/products'}>Products</Link>
   </li>
   <li>
-    <Link className='link' to={'#'}>Orders</Link>
+    <Link className='link' to={'/admin/orders'}>Orders</Link>
   </li>
   <li>
     <Link className='link' to={'#'}>Users</Link>

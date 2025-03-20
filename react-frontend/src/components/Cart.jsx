@@ -1,23 +1,31 @@
-import React from "react";
+import React, { useContext, useState } from "react";
 import { Link } from "react-router-dom";
 import ProductImg from '../assets/images/Mens/six.jpg'
+import { CartContext } from "./context/Cart";
 
 const Cart = () => {
+  const {cartData,grandTotal,subTotal,shipping,updateCartItem,deleteCartItem}=useContext(CartContext);
+  const [qty,setQty]=useState({});
+  const handleQty=(e,itemId)=>{
+const newQty=e.target.value;
+setQty(prev=>({...prev,[itemId]:newQty}))
+updateCartItem(itemId,newQty)
+  }
   return (
     <div className="container ">
       <div className="row  ">
         <div className="col-md-12">
           <nav aria-label="breadcrumb mt-2">
             <li
-              class="breadcrumb "
+              className="breadcrumb py-4 d-flex "
               style={{ listStyle: "none" }}
-              className="py-4 d-flex"
+              
             >
-              <li class="breadcrumb-item">
+              <li className="breadcrumb-item">
                 <Link to={"/"}>Home</Link>
               </li>
 
-              <li class="breadcrumb-item active" aria-current="page">
+              <li className="breadcrumb-item active" aria-current="page">
                 Cart
               </li>
             </li>
@@ -30,77 +38,82 @@ const Cart = () => {
 
             <table className="table">
                 <tbody>
-                    <tr>
+                  {
+                    cartData.length==0 && <tr align='center' valign='middle' style={{ height:200 }} className=" "><td colSpan={4}>Your Cart is Empty</td></tr>
+                  }
+                  {
+                    cartData && cartData.map(item=>(
+<tr key={`cart-${item.id}`}>
                         <td width={100}>
-                            <img src={ProductImg} width={90} alt="" />
+                            <img src={item.image_url} width={90} alt="" />
                         </td>
                         <td width={600} >
-                                <h4>Dummy Product title</h4>
+                                <h4>{item.title}</h4>
                             <div className="d-flex align-items-center pt-3">
-                                <span>$10</span>
+                                <span>${item.price}</span>
                                  <div className="ps-3">
-                                 <button className="btn btn-size">S</button>
+
+
+                                  {
+                                    item.port && <button className="btn btn-size">{item.port}</button>
+                                  }
+                                 
                                  </div>
                             </div>
                         </td>
                         <td valign="middle" >
-                            <input style={{ width:'100px' }} type="number" value={1} className="form-control" />
+                            <input style={{ width:'100px' }}
+                            min={1}
+                            max={10}
+                             type="number" onChange={(e)=>handleQty(e,item.id)} 
+                            value={qty[item.id]||item.qty} className="form-control" />
                         </td>
                         <td valign="middle">
-                        <i class="bi bi-trash"></i>
+
+                        <button onClick={()=>deleteCartItem(item.id)}><i className="bi bi-trash"></i></button>
                         </td>
                     </tr>
-                    <tr>
-                        <td width={100}>
-                            <img src={ProductImg} width={90} alt="" />
-                        </td>
-                        <td width={600} >
-                                <h4>Dummy Product title</h4>
-                            <div className="d-flex align-items-center pt-3">
-                                <span>$10</span>
-                                 <div className="ps-3">
-                                 <button className="btn btn-size">S</button>
-                                 </div>
-                            </div>
-                        </td>
-                        <td valign="middle" >
-                            <input style={{ width:'100px' }} type="number" value={1} className="form-control" />
-                        </td>
-                        <td valign="middle">
-                        <i class="bi bi-trash"></i>
-                        </td>
-                    </tr>
+                    ))
+                  }
+                    
+                 
                 </tbody>
             </table>
 
-            {/* <div className="row p-4 justify-content-end "> */}
+            {/* <div className="row  justify-content-end "> */}
        
       {/* </div> */}
         </div>
-      
-        <div className="col-md-4 mb-2 p-4 mt-5  motion-preset-slide-left motion-delay-500"> 
            
-           <div className="border   p-4">
-           <div className="mb-3 d-flex h3"><strong>Proceed To Checkout</strong></div>
-            <div className="d-flex justify-content-between border-bottom pb-2">
-                <div>SubTotal</div>
-                <div>$20</div>
-            </div>
-            <div className="d-flex justify-content-between border-bottom py-2">
-                <div>Shipping</div>
-                <div>$5</div>
-            </div>
-            <div className="d-flex justify-content-between border-bottom py-2">
-                <div> <strong>Grand Total</strong></div>
-                <div>$25</div>
-            </div>
-
-          <div className="d-flex justify-content-end py-3">
-          <Link to={'/checkout'} className="btn btn-primary"> Checkout</Link>
-          </div>
-           </div>
-
-        </div>
+        {
+                    cartData.length>0 &&
+                    
+                    <div className="col-md-4 mb-2 p-4 mt-5  motion-preset-slide-left motion-delay-500"> 
+           
+                    <div className="border   p-4">
+                    <div className="mb-3 d-flex h3"><strong>Proceed To Checkout</strong></div>
+                     <div className="d-flex justify-content-between border-bottom pb-2">
+                         <div>SubTotal</div>
+                         <div>${subTotal()}</div>
+                     </div>
+                     <div className="d-flex justify-content-between border-bottom py-2">
+                         <div>Shipping</div>
+                         <div>${shipping()}</div>
+                     </div>
+                     <div className="d-flex justify-content-between border-bottom py-2">
+                         <div> <strong>Grand Total</strong></div>
+                         <div>${grandTotal()}</div>
+                     </div>
+         
+                   <div className="d-flex justify-content-end py-3">
+                   <Link to={'/checkout'} className="btn btn-primary"> Checkout</Link>
+                   </div>
+                    </div>
+         
+                 </div>
+                
+                    }
+        
       
         </div>
     

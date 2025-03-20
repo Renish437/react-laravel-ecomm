@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Modal = ({ button, color, onConfirm, onCancel }) => {
+const Modal = ({ button, color, onConfirm, onCancel, text }) => {
     return (
         <div className="modal" style={{ display: 'block', background: 'rgba(0, 0, 0, 0.5)' }}>
             <div className="modal-dialog" role="document">
@@ -12,7 +12,7 @@ const Modal = ({ button, color, onConfirm, onCancel }) => {
                         </button>
                     </div>
                     <div className="modal-body">
-                        <p>Are you sure you want to delete this product?</p>
+                        <p>{text}</p>
                     </div>
                     <div className="modal-footer">
                         <button type="button" className={`btn ${color}`} onClick={onConfirm}>{button}</button>

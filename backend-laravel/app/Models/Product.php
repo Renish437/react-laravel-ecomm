@@ -15,4 +15,11 @@ class Product extends Model
      }
      return asset('/uploads/products/smallThumb/'.$this->image);
     }
+    function product_images(){
+        return $this->hasMany(ProductImage::class);
+    }
+    function product_ports(){
+        return $this->hasMany(ProductSpec::class);
+    }
+
 }

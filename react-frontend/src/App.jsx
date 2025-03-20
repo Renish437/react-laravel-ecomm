@@ -22,6 +22,13 @@ import EditBrands from "./components/admin/brands/EditBrands";
 import CreateProduct from "./components/admin/product/CreateProduct";
 import ShowProduct from "./components/admin/product/ShowProduct";
 import EditProduct from "./components/admin/product/EditProduct";
+import Register from "./components/Register";
+import Logins from "./components/Logins";
+import Profile from "./components/Profile";
+import { RequireAuth } from "./components/RequireAuth";
+import SuccessMessage from "./components/SuccessMessage";
+import ShowOrders from "./components/admin/orders/ShowOrders";
+import OrderDetail from "./components/admin/orders/OrderDetail";
 
 
 function App() {
@@ -30,7 +37,8 @@ function App() {
       path: "/",
       element: <Root />,
       children: [
-        {
+        { 
+          // UserRoutes
           index: true,
           element: <Home />,
         },
@@ -39,17 +47,51 @@ function App() {
           element: <Shop />,
         },
         {
-          path: "/product",
+          path: "/product/:id",
           element: <Product />,
         },
         {
           path: "/cart",
           element: <Cart />,
         },
+        // {
+        //   path: "/checkout",
+        //   element: <Checkout />,
+        // },
+        {
+          path: "/account/register",
+          element: <Register />,
+        },
+        {
+          path: "/account/login",
+          element: <Logins />,
+        },
+        {
+          path: "/account",
+          element: (
+            <RequireAuth>
+              <Profile />
+            </RequireAuth>
+          ),
+        },
         {
           path: "/checkout",
-          element: <Checkout />,
+          element: (
+            <RequireAuth>
+              <Checkout />
+            </RequireAuth>
+          ),
         },
+        {
+          path: "/success-message/:id",
+          element: (
+            <RequireAuth>
+              <SuccessMessage/>
+            </RequireAuth>
+          ),
+        },
+        
+        // Admin Routes
         {
           path: "/admin/login",
           element: <Login />,
@@ -131,6 +173,22 @@ function App() {
           element: (
             <AdminRequireAuth>
              <EditProduct/>
+            </AdminRequireAuth>
+          ),
+        },
+        {
+          path: "/admin/orders",
+          element: (
+            <AdminRequireAuth>
+             <ShowOrders/>
+            </AdminRequireAuth>
+          ),
+        },
+        {
+          path: "/admin/orders/:id",
+          element: (
+            <AdminRequireAuth>
+             <OrderDetail/>
             </AdminRequireAuth>
           ),
         },

@@ -3,8 +3,14 @@
 namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Category;
+use App\Models\OtherSpec;
 use App\Models\Product;
+use App\Models\ProductImage;
+use App\Models\ProductSpec;
 use App\Models\TempImage;
+use Illuminate\Support\Facades\File;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Intervention\Image\Drivers\Gd\Driver;
@@ -15,7 +21,7 @@ class ProductController extends Controller
     //
     //This method will return all the products
     public function index(){
-        $products=Product::orderBy("created_at","asc")->get();
+        $products=Product::orderBy("created_at","asc")->with(['product_images','product_ports'])->get();
         return response()->json([
             'status'=>200,
             "data"=> $products,
@@ -59,6 +65,16 @@ if($validator->fails()){
     $product->is_featured=$request->is_featured;
     $product->save();
 
+    if(!empty($request->ports)){
+        
+        foreach($request->ports as $portId){
+            $productPort= new ProductSpec();   
+            $productPort->port_id=$portId;
+            $productPort->product_id=$product->id;
+            $productPort->save();
+        }
+    }
+
              //save the product images
              if(!empty($request->gallery)){
                 foreach($request->gallery as $key=>$tempImageId){
@@ -67,8 +83,9 @@ if($validator->fails()){
                 // Large Thumbnail
                 $extArray=explode('.',$tempImage->name);
                 $ext=end($extArray);
+                $rand=rand(1000,10000);
 
-                $imageName=$product->id.'-'.time().'.'.$ext;  //2-123445.jpg
+                $imageName=$product->id.'-'.$rand.time().'.'.$ext;  //2-123445.jpg
                 $manager = new ImageManager(Driver::class);
                 $img = $manager->read(public_path('uploads/temp/'. $tempImage->name));
                 $img->scaleDown(1200);
@@ -80,7 +97,12 @@ if($validator->fails()){
                 $img = $manager->read(public_path('uploads/temp/'. $tempImage->name));
                 $img->coverDown(400,460);
                 $img->save(public_path('uploads/products/smallThumb/'.$imageName));
-
+                
+                $productImage=new ProductImage();
+                $productImage->image=$imageName;
+                $productImage->product_id=$product->id;
+                $productImage->save();
+                
                 if($key == 0){
                     $product->image=$imageName;
                     $product->save();                //product image update
@@ -101,17 +123,19 @@ if($validator->fails()){
     }
       //This method will return a single product
       public function show($id,Request $request){
-        $product=Product::find($id);
+        $product=Product::with(['product_images','product_ports'])->find($id);
         if($product==null){
             return response()->json([
                 'status'=> 404,
                 'message'=> 'Product not found.',
             ]);
         }
+        $productPortsId=$product->product_ports()->pluck('port_id');
         return response()->json([
             'status'=> 200,
             'message'=> 'Product fetched successfully.',
-            'data'=>$product
+            'data'=>$product,
+            'productPorts'=>$productPortsId
         ],200);
         
 
@@ -160,6 +184,16 @@ if($validator->fails()){
             $product->is_featured=$request->is_featured;
             $product->save();
 
+            if(!empty($request->ports)){
+                ProductSpec::where('product_id',$product->id)->delete();
+                foreach($request->ports as $portId){
+                    $productPort= new ProductSpec();   
+                    $productPort->port_id=$portId;
+                    $productPort->product_id=$product->id;
+                    $productPort->save();
+                }
+            }
+
             return response()->json([
                 'status'=> 200,
                 'message'=> 'Product updated successfully',
@@ -169,8 +203,8 @@ if($validator->fails()){
    
     }
       //This method will delete a single product
-      public function destroy($id,Request $request){
-        $product=Product::find($id);
+      public function destroy($id){
+        $product=Product::with('product_images')->find($id);
 
         if($product==null){
             return response()->json([
@@ -179,6 +213,26 @@ if($validator->fails()){
             ],404);
         }
         $product->delete();
+
+        if($product->product_images){
+            foreach ($product->product_images as $productImage) {
+                $largeThumbPath = public_path('uploads/products/largeThumb/' . $productImage->image);
+                $smallThumbPath = public_path('uploads/products/smallThumb/' . $productImage->image);
+    
+                // Check and delete large thumbnail
+                if (File::exists($largeThumbPath)) {
+                    File::delete($largeThumbPath);
+                }
+    
+                // Check and delete small thumbnail
+                if (File::exists($smallThumbPath)) {
+                    File::delete($smallThumbPath);
+                }
+    
+                // Optionally delete the ProductImage record
+                $productImage->delete();
+            }
+        }
         return response()->json([
             'status'=> 200,
             'message'=> 'Product deleted successfully',
@@ -186,4 +240,96 @@ if($validator->fails()){
         
 
       }
+
+      public function saveProductImage(Request $request){
+        $validator=Validator::make(request()->all(),[
+            'image'=> 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        if($validator->fails()){
+            return response()->json([
+                'status'=>400,
+                'message'=> $validator->errors(),
+            ],400);
+        }
+
+  
+
+  
+
+    $image=$request->file('image');
+    $imageName=$request->product_id.'-'.time().'.'.$image->extension();  //25323763.jpg
+ 
+
+
+
+
+
+
+     // Large Thumbnail
+     $manager = new ImageManager(Driver::class);
+     $img = $manager->read($image->getPathName());
+     $img->scaleDown(1200);
+     $img->save(public_path('uploads/products/largeThumb/'.$imageName));
+
+     //Small Thumbnail
+   
+     $manager = new ImageManager(Driver::class);
+     $img = $manager->read($image->getPathName());
+     $img->coverDown(400,460);
+     $img->save(public_path('uploads/products/smallThumb/'.$imageName));
+     
+    // Insert a record in product_images tables
+    $productImage=new ProductImage();
+    $productImage->image=$imageName;
+    $productImage->product_id=$request->product_id;
+    $productImage->save();
+
+   
+
+        return response()->json([
+            'status'=> 200,
+            'message'=> 'Product Image added successfully',
+            'data'=> $productImage,
+            
+        ],200);
+
+      }
+
+      public function updateDefaultImage(Request $request){
+       $product=Product::find($request->product_id);
+       $product->image=$request->image;
+       $product->save();
+        
+       return response()->json([
+        'status'=> 200,
+        'message'=> 'Product Default Image Changed successfully',
+   
+        
+    ],200);
+      }
+      public function deleteProductImage($id){
+        $productImage=ProductImage::find($id);
+        if($productImage== null){
+            return response()->json([
+                'status'=> 404,
+                'message'=> 'Image not Found',
+           
+                
+            ],404);
+        }
+        File::delete(public_path('uploads/products/largeThumb/'.$productImage->image));
+        File::delete(public_path('uploads/products/smallThumb/'.$productImage->image));
+       
+        $productImage->delete();
+
+        return response()->json([
+         'status'=> 200,
+         'message'=> 'Product Image deleted successfully',
+    
+         
+     ],200);
+      }
+      
 }
+

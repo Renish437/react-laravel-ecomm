@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('product_specs', function (Blueprint $table) {
             $table->id();
             $table->foreignId('product_id')->constrained('products')->onDelete('cascade');
-            $table->foreignId('other_specs_id')->constrained('other_specs')->onDelete('cascade'); // References 'id' in 'other_specs' ta
+            $table->foreignId('port_id')->constrained('ports')->onDelete('cascade'); // References 'id' in 'other_specs' ta
 
             $table->timestamps();
         });

@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useContext, useEffect, useState } from "react";
+import { Link, useParams } from "react-router-dom";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Thumbs, FreeMode, Navigation } from "swiper/modules";
 import "swiper/css";
@@ -12,9 +12,62 @@ import ProductImgThree from '../assets/images/Mens/seven.jpg';
 import { Rating } from 'react-simple-star-rating'
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
+import { apiUrl } from "./common/Http";
+import { CartContext } from "./context/Cart";
+import { toast } from "react-toastify";
+import Pagination from "./Pagination";
 const Product = () => {
   const [thumbsSwiper, setThumbsSwiper] = useState(null);
   const [rating, setRating] = useState(4)
+  const [product, setProduct] = useState([]);
+  const [productImages, setProductImages] = useState([]);
+  const [productPorts, setProductPorts] = useState([]);
+  const [portSelected, setPortSelected] = useState(null);
+  const params=useParams();
+  const {addToCart}=useContext(CartContext)
+    const fetchProducts=async()=>{
+      await fetch(apiUrl+'/get-product/'+params.id,{
+            method:'GET',
+            headers:{
+              'Content-type':'application/json',
+              'Accept':'application/json',
+            }
+          }).then(res=>res.json())
+          .then(result=>{
+            if(result.status==200){
+              setProduct(result.data);
+              setProductImages(result.data.product_images)
+              setProductPorts(result.data.product_ports)
+              console.log(result.data);
+              
+            }
+            else{
+              console.log('Something went wrong');
+              
+            }
+            
+          })
+    }
+    const handleAddToCart=()=>{
+      if(productPorts.length>0){
+
+        if(portSelected==null){
+          toast.error('Please Select a size')
+        } else{
+          addToCart(product,portSelected)
+          toast.success('Product successfully added to Cart')
+        }
+      } else{
+        addToCart(product,null)
+        toast.success('Product successfully added to Cart')
+      }
+    }
+    useEffect(() => {
+      fetchProducts();
+    
+    }, [])
+    
+
   return (
 
       <div className="container product-detail">
@@ -22,17 +75,17 @@ const Product = () => {
           <div className="col-md-12">
             <nav aria-label="breadcrumb mt-3">
               <li
-                class="breadcrumb "
+               
                 style={{ listStyle: "none" }}
-                className="py-4 d-flex"
+                className="py-4 d-flex breadcrumb"
               >
-                <li class="breadcrumb-item">
+                <li className="breadcrumb-item">
                   <Link to={"/"}>Home</Link>
                 </li>
-                <li class="breadcrumb-item">
+                <li className="breadcrumb-item">
                   <Link to={"/shop"}>Shop</Link>
                 </li>
-                <li class="breadcrumb-item active" aria-current="page">
+                <li className="breadcrumb-item active" aria-current="page">
                   Products
                 </li>
               </li>
@@ -58,36 +111,24 @@ const Product = () => {
                   modules={[FreeMode, Navigation, Thumbs]}
                   className="mySwiper mt-2"
                 >
-                  <SwiperSlide>
+                  {
+                    productImages && productImages.map(product_image=>{
+                      return(
+<SwiperSlide key={`image-sm-${product_image.id}`}>
                     <div className="content">
                       <img
-                        src={ProductImgOne}
+                        src={product_image.image_url}
                         alt=""
                         height={100}
                         className="w-100"
                       />
                     </div>
                   </SwiperSlide>
-                  <SwiperSlide>
-                    <div className="content">
-                      <img
-                        src={ProductImgTwo}
-                        alt=""
-                        height={100}
-                        className="w-100"
-                      />
-                    </div>
-                  </SwiperSlide>
-                  <SwiperSlide>
-                    <div className="content">
-                      <img
-                        src={ProductImgThree}
-                        alt=""
-                        height={100}
-                        className="w-100"
-                      />
-                    </div>
-                  </SwiperSlide>
+                      )
+                    })
+                  }
+                  
+                
                 </Swiper>
               </div>
               <div className="col-10">
@@ -103,27 +144,29 @@ const Product = () => {
                   modules={[FreeMode, Navigation, Thumbs]}
                   className="mySwiper2"
                 >
-                  <SwiperSlide>
+                   {
+                    productImages && productImages.map(product_image=>{
+                      return(
+<SwiperSlide key={`image-${product_image.id}`}>
                     <div className="content">
-                      <img src={ProductImgOne} alt="" className="w-100" />
+                      <img
+                        src={product_image.image_url}
+                        alt=""
+                        height={100}
+                        className="w-100"
+                      />
                     </div>
                   </SwiperSlide>
-                  <SwiperSlide>
-                    <div className="content">
-                      <img src={ProductImgTwo} alt="" className="w-100" />
-                    </div>
-                  </SwiperSlide>
-                  <SwiperSlide>
-                    <div className="content">
-                      <img src={ProductImgThree} alt="" className="w-100" />
-                    </div>
-                  </SwiperSlide>
+                      )
+                    })
+                  }
+                
                 </Swiper>
               </div>
             </div>
           </div>
           <div className="col-md-7">
-            <h2>Dummy Product Title</h2>
+            <h2>{product.title}</h2>
 
             <div className="d-flex ">
             <Rating
@@ -135,35 +178,42 @@ const Product = () => {
       <span className="pt-1 ps-2">10 Reviews</span>
             </div>
             <div className="price h3 py-3">
-                $20 <span className="text-decoration-line-through">$18</span>
+            $ {product.price} &nbsp; 
+                        {
+                          product.compare_price && <span className='text-decoration-line-through'>${ product.compare_price }</span>
+                        }
+                {/* $20 <span className="text-decoration-line-through">$18</span> */}
             </div>
 
 
 <div>
-    100% Original products <br />
-    Pay on delivery might be available <br />
-    Easy 15 days returns and exchanges
+{product.short_description}
 </div>
 
     <div className="pt-3">
     <strong className="">Select the size</strong>
    
 <div className="sizes pt-2">
-<button className="btn btn-size">S</button>
-<button className="btn btn-size ms-1">M</button>
-<button className="btn btn-size ms-1">L</button>
-<button className="btn btn-size ms-1">XL</button>
+
+  {productPorts && productPorts.map(product_port=>{
+    return(
+<button key={`p-port-${product_port.id}`} onClick={()=>setPortSelected(product_port.port.name)}
+ className={`btn btn-size me-2 ${portSelected==product_port.port.name?'active scale-[1.05]':''}`}>{product_port.port.name}</button>
+    )
+  })}
+
+
 </div>
 </div>
 
 <div className="add-to-cart my-4">
-    <button className="btn btn-primary text-uppercase">Add To Cart</button>
+    <button onClick={()=>handleAddToCart()} className="btn btn-primary text-uppercase">Add To Cart</button>
 </div>
 
 <hr />
 <div>
   <strong>SKU:</strong>
-  DDXXX234
+  {product.sku}
 </div>
             
           </div>
@@ -171,20 +221,22 @@ const Product = () => {
         <div className="row  py-5">
             <div className="col-md-12">
             <Tabs
-      defaultActiveKey="profile"
+      defaultActiveKey="description"
       id="uncontrolled-tab-example"
       className="mb-3"
     >
-      <Tab eventKey="home" title="Description">
-        Tab content for Description
+      <Tab eventKey="description" title="Description">
+      <div dangerouslySetInnerHTML={{ __html: product.description }}></div>
+
       </Tab>
-      <Tab eventKey="profile" title="Reviews (10)">
+      <Tab eventKey="reviews" title="Reviews (10)">
         Reviews Area
       </Tab>
     
     </Tabs>
             </div>
         </div>
+        
       </div>
    
   );

@@ -36,35 +36,35 @@ const ShowProduct = () => {
       });
   };
 
-   const deleteCategory = async () => {
-      try {
-        const res = await fetch(apiUrl + "/products/"+selectedProductId, {
-          method: "DELETE",
-          headers: {
-            "Content-type": "application/json",
-            Accept: "application/json",
-            Authorization: `Bearer ${adminToken()} `,
-          },
-        })
-          .then((res) => res.json())
-          .then((result) => {
-            console.log(result);
-            if (result.status == 200) {
-              const newCategories = products.filter(
-                (product) => product.id !== selectedProductId
-              );
-              setProducts(newCategories);
-              toast.success(result.message);
-            } else {
-              console.error("Something Went Wrong");
-            }
-          });
-      } catch (error) {
-        console.error("Error deleting category:", error);
-      } finally {
-        setShowModal(false);
-      }
-    };
+  const deleteProduct = async () => {
+    try {
+      const res = await fetch(apiUrl + "/products/" + selectedProductId, {
+        method: "DELETE",
+        headers: {
+          "Content-type": "application/json",
+          "Accept": "application/json",
+          "Authorization": `Bearer ${adminToken()} `,
+        },
+      })
+        .then((res) => res.json())
+        .then((result) => {
+          console.log(result);
+          if (result.status == 200) {
+            const newProducts = products.filter(
+              (prod) => prod.id !== selectedProductId
+            );
+            setProducts(newProducts);
+            toast.success(result.message);
+          } else {
+            toast.error(result.message);
+          }
+        });
+    } catch (error) {
+      console.error("Error deleting category:", error);
+    } finally {
+      setShowModal(false);
+    }
+  };
 
   useEffect(() => {
     fetchProducts();
@@ -102,14 +102,22 @@ const ShowProduct = () => {
                       <th>Action</th>
                     </tr>
                   </thead>
-                  <tbody >
+                  <tbody>
                     {products &&
                       products.map((product, index) => {
                         return (
                           <tr key={index}>
                             <td>{index + 1}</td>
                             <td>
-                            <img src={product.image_url} width={50} alt={product.title} />
+                              {product.image_url === "" ? (
+                                <img src="https://placehold.co/600x400" />
+                              ) : (
+                                <img
+                                  src={product.image_url}
+                                  width={50}
+                                  alt={product.title}
+                                />
+                              )}
                             </td>
                             <td>{product.title}</td>
                             <td>${product.price}</td>
@@ -135,7 +143,7 @@ const ShowProduct = () => {
                               </Link>
                               <Link
                                 onClick={() => {
-                                    setSelectedProductId(product.id);
+                                  setSelectedProductId(product.id);
                                   setShowModal(true);
                                 }}
                                 className="link ms-2 text-danger"
@@ -150,19 +158,19 @@ const ShowProduct = () => {
                 </table>
               )}
             </div>
-
           </div>
         </div>
       </div>
       {showModal && (
-                <Modal
-                    button="Delete"
-                    color="btn-danger"
-                    onConfirm={deleteCategory}
-                    onCancel={() => setShowModal(false)}
-                />
-            )}
-            <SkeletonTable2/>
+        <Modal
+          button="Delete"
+          color="btn-danger"
+          onConfirm={deleteProduct}
+          onCancel={() => setShowModal(false)}
+          text="Are you sure you want delete this product here?"
+        />
+      )}
+      
     </div>
   );
 };
