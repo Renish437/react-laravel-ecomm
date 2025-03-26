@@ -8,7 +8,7 @@ import { adminToken, apiUrl, userToken } from './common/Http'
 import { toast } from 'react-toastify'
 const Checkout = () => {
     const [paymentMethod, setPaymentMethod] = useState('cod');
-    const {cartData,subTotal,grandTotal,shipping}=useContext(CartContext);
+    const {cartData,subTotal,grandTotal,shipping,setCartData}=useContext(CartContext);
 const navigate=useNavigate();
     const handlePaymentMethod=(e)=>{
         setPaymentMethod(e.target.value)
@@ -23,7 +23,7 @@ const navigate=useNavigate();
       const processOrder=(data)=>{
       console.log(data)
       if(paymentMethod=='cod'){
-              saveOrder(data,'not paid')
+              saveOrder(data,'not_paid')
       }
       }
       const saveOrder=async(formData,paymentStatus)=>{
@@ -53,6 +53,7 @@ const navigate=useNavigate();
                     console.log(result);
                     
                     localStorage.removeItem('cart');
+                    setCartData([]);
                     // toast.success(result.message);
                     navigate("/success-message/"+result.id);
                   } else {

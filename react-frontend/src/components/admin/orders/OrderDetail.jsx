@@ -4,36 +4,93 @@ import { Link, useParams } from 'react-router-dom'
 import { adminToken, apiUrl } from '../../common/Http';
 import SkeletonTable from '../../common/Loader/SkeletonTable';
 import Loader from '../../common/Loader/Loader';
+import { useForm } from 'react-hook-form';
+import { toast } from 'react-toastify';
 
 const OrderDetail = () => {
     const [order, setOrder] = useState([]);
     const [items, setItems] = useState([]);
      const [loader, setLoader] = useState(false);
      const params = useParams();
-      const fetchOrders = async () => {
-           setLoader(true);
-           const res = fetch(apiUrl + "/orders/"+params.id, {
-             method: "GET",
-             headers: {
-               "Content-type": "application/json",
-               Accept: "application/json",
-               Authorization: `Bearer ${adminToken()} `,
-             },
-           })
-             .then((res) => res.json())
-             .then((result) => {
-               console.log(result);
-               if (result.status == 200) {
-                 setOrder(result.data);
-                 setItems(result.data.items);
-                 setLoader(false);
-               } else {
-                 console.error("Something Went Wrong");
-               }
-             });
-         };
+
+     const {
+      register,
+      handleSubmit,
+      reset,
+      formState: { errors },
+    } = useForm();
+
+ 
+    const fetchOrders = async () => {
+      try {
+        setLoader(true);
+        const res = await fetch(apiUrl + "/orders/" + params.id, {
+          method: "GET",
+          headers: {
+            "Content-type": "application/json",
+            "Accept": "application/json",
+            "Authorization": `Bearer ${adminToken()} `,
+          },
+        });
+    
+        const result = await res.json();
+        console.log("API Response:", result); // ✅ Debugging
+    
+        if (res.ok && result.status === 200) {
+          setOrder(result.data);
+          setItems(result.data.items);
+          reset({
+            status: result.data.status,
+            payment_status: result.data.payment_status
+          });
+        } else {
+          console.error("API Error:", result);
+          toast.error(result.message || "Something went wrong");
+        }
+      } catch (error) {
+        console.error("Fetch Orders Error:", error);
+        toast.error("Something went wrong while fetching the order.");
+      } finally {
+        setLoader(false);
+      }
+    };
+    
+   const updateOrder=async(data)=>{
+          setLoader(true);
+          const res = await fetch(apiUrl + "/update-order/"+params.id, {
+            method: "POST",
+            headers: {
+              'Content-type': "application/json",
+              'Accept': "application/json",
+              'Authorization': `Bearer ${adminToken()}` ,
+            },
+            body: JSON.stringify(data),
+          })
+            .then((res) => res.json())
+            .then((result) => {
+             
+              setLoader(false);
+              if (result.status == 200) {
+                console.log("Response from Backend:", result); // ✅ Debugging Line
+               setOrder(result.data);
+                
+                reset({
+                 status: result.data.status,
+                 payment_status:result.data.payment_status
+                })
+                toast.success(result.message);
+               
+              } else {
+                console.error("Something Went Wrong-1");
+              }
+            });
+      } 
+    
+    
+    
          useEffect(() => {
            fetchOrders();
+           updateOrder();
          }, []);
   return (
     <div className="container">
@@ -58,11 +115,13 @@ const OrderDetail = () => {
 <div className="row">
             <div className="col-md-4">
                 <h3>Order Id: {order.id}</h3>
-                {order.status === 'pending' && <span className="badge bg-warning">Pending</span>}
+               <div className='mt-2'>
+               {order.status === 'pending' && <span className="badge bg-warning">Pending</span>}
                   {order.status === 'shipped' && <span className="badge bg-success">Shipped</span>}
                   {order.status === 'delivered' && <span className="badge bg-success">Delivered</span>}
                   {order.status === 'cancelled' && <span className="badge bg-danger">Cancelled</span>}
 
+               </div>
 
             </div>
             <div className="col-md-4">
@@ -95,26 +154,26 @@ const OrderDetail = () => {
             </div>
             
           </div>
-          <div class="row pt-5">
-   <h3 class="pb-2"><strong>Items</strong></h3>
+          <div className="row pt-5">
+   <h3 className="pb-2"><strong>Items</strong></h3>
   
    {
     items.map((item)=>(
-        <div key={item.id} class="row justify-content-end">
-        <div class="col-lg-12">
-           <div class="d-flex border-bottom justify-content-between mb-2 pb-2">
-              <div class="d-flex">
+        <div key={item.id} className="row justify-content-end">
+        <div className="col-lg-12">
+           <div className="d-flex border-bottom justify-content-between mb-2 pb-2">
+              <div className="d-flex">
                  {
-                    item.product.image &&<img width="70" class="me-3" src={`${item.product.image_url}`} alt=""/>
+                    item.product.image &&<img width="70" className="me-3" src={`${item.product.image_url}`} alt=""/>
                  }
-                 <div class="d-flex flex-column">
-                    <div class="mb-2"><span>{item.name}</span></div>
-                    <div><button class="btn btn-size">{item.port}</button></div>
+                 <div className="d-flex flex-column">
+                    <div className="mb-2"><span>{item.name}</span></div>
+                    <div><button className="btn btn-size">{item.port}</button></div>
                  </div>
               </div>
-              <div class="d-flex">
+              <div className="d-flex">
                  <div>X {item.qty}</div>
-                 <div class="ps-3">${item.price}</div>
+                 <div className="ps-3">${item.price}</div>
               </div>
            </div>
         </div>
@@ -122,17 +181,17 @@ const OrderDetail = () => {
     ))
        
 }
-<div class="row justify-content-end">
-      <div class="col-lg-12">
-         <div class="d-flex border-bottom justify-content-between mb-2 pb-2">
+<div className="row justify-content-end">
+      <div className="col-lg-12">
+         <div className="d-flex border-bottom justify-content-between mb-2 pb-2">
             <div>Subtotal</div>
             <div>{order.sub_total}</div>
          </div>
-         <div class="d-flex border-bottom justify-content-between mb-2 pb-2">
+         <div className="d-flex border-bottom justify-content-between mb-2 pb-2">
             <div>Shipping</div>
             <div>${order.shipping}</div>
          </div>
-         <div class="d-flex border-bottom justify-content-between mb-2 pb-2">
+         <div className="d-flex border-bottom justify-content-between mb-2 pb-2">
             <div><strong>Grand Total</strong></div>
             <div>${order.grand_total}</div>
          </div>
@@ -149,7 +208,38 @@ const OrderDetail = () => {
             <div className="col-md-3">
             <div className="card shadow">
         <div className="card-body p-4">
-         
+        <form onSubmit={handleSubmit(updateOrder)}>
+  <div className="mb-3">
+    <label className="form-label" htmlFor="status">Status</label>
+    <select 
+      {...register('status', { required: true })}
+      name="status"
+      className="form-select" 
+      id="status"
+    >
+      <option value="pending">Pending</option>
+      <option value="shipped">Shipped</option>
+      <option value="delivered">Delivered</option>
+      <option value="cancelled">Cancelled</option>
+    </select>
+  </div>
+
+  <div className="mb-3">
+    <label className="form-label" htmlFor="payment_status">Payment Status</label>
+    <select 
+      {...register('payment_status', { required: true })}
+      name="payment_status" 
+      className="form-select" 
+      id="payment_status"
+    >
+      <option value="paid">Paid</option>
+      <option value="not_paid">Not Paid</option>
+    </select>
+  </div>
+
+  <button className="btn btn-primary">Update</button>
+</form>
+
         </div>
       </div>
             </div>

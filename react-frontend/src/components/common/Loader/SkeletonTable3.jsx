@@ -48,7 +48,7 @@ const SkeletonTable3 = () => {
                   <div className="skeleton skeleton-text"></div>
                 </td>
                 <td className="">
-                  <div className=" skeleton skeleton-text"></div>
+                  <div className="skeleton skeleton-text"></div>
                 </td>
                 <td>
                   <div className="skeleton skeleton-text3"></div>

@@ -1,37 +1,60 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-
+import { apiUrl } from "./Http";
+import logo from '../../assets/images/logo5.png'
 const Footer = () => {
+  const [categories, setCategories] = useState([]); 
+    const fetchCategories = async () => {
+      await fetch(apiUrl + '/get-categories', {
+        method: 'GET',
+        headers: {
+          'Content-type': 'application/json',
+          'Accept': 'application/json',
+        },
+      })
+        .then(res => res.json())
+        .then(result => {
+          if (result.status === 200) {
+            setCategories(result.data);
+          } else {
+            console.log('Something went wrong');
+          }
+        });
+    };
+  
+    useEffect(() => {
+      fetchCategories();
+    }, []);
   return (
     <footer className="text-white ">
       <div className="container py-5">
         <div className="row mb-5">
           <div className="col-md-3 mb-4 motion-preset-slide-right motion-delay-500">
-            <img src="src/assets/images/logo-white.png" alt="" width={150} />
+            <img className="logo-foot" src={logo} alt="" width={150} />
             <div className="pe-5">Lorem ipsum dolor sit amet.</div>
           </div>
           <div className="col-md-3 mb-4 motion-preset-slide-right motion-delay-500">
             <h2 className="mb-3">Categories</h2>
             <ul>
-              <li>
-                <Link className='link' to={"/"}>Kids</Link>
-              </li>
-              <li>
-                <Link className='link' to={"/"}>Mens</Link>
-              </li>
-              <li>
-                <Link className='link' to={"/"}>Women</Link>
-              </li>
+              {
+                categories && categories.map((category) => (
+                  <li key={category.id}>
+                    <Link className='link'   to={`/shop?category=${category.id}`}>{category.name}</Link>
+                  </li>
+                ))
+              }
+             
+              
             </ul>
           </div>
           <div className="col-md-3 mb-4 motion-preset-slide-left motion-delay-500">
           <h2 className="mb-3">Quick Links</h2>
             <ul>
               <li>
-                <Link className='link' to={"/"}>Login</Link>
+                <Link className='link' to={"/account/login"}>Login</Link>
               </li>
               <li>
-                <Link className='link' to={"/"}>Register</Link>
+                <Link className='link' to={"/account/register"}>Register</Link>
               </li>
             
             </ul>

@@ -51,6 +51,7 @@ Route::get('change-product-default-image', [ProductController::class,'updateDefa
 Route::delete('delete-product-image/{id}', [ProductController::class,'deleteProductImage']);
 Route::get('orders',[AdminOrderController::class,'index']);
 Route::get('orders/{id}',[AdminOrderController::class,'details']);
+Route::post('update-order/{id}',[AdminOrderController::class,'updateOrder']);
 });
 
 // Route::middleware(['cors'])->post('temp-images', [TempImageController::class, 'store']);

@@ -18,7 +18,7 @@ return new class extends Migration
             $table->double('grand_total',10,2);
             $table->double('shipping',10,2);
             $table->double('discount',10,2)->nullable();
-            $table->enum('payment_status',['paid','not paid'])->default('not paid');
+            $table->enum('payment_status',['paid','not_paid'])->default('not_paid');
             $table->enum('status',['pending','shipped','delivered','cancelled'])->default('pending');
             $table->string('name');
             $table->string('email');

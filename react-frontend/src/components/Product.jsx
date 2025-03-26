@@ -16,9 +16,10 @@ import { apiUrl } from "./common/Http";
 import { CartContext } from "./context/Cart";
 import { toast } from "react-toastify";
 import Pagination from "./Pagination";
+import ReactStars from "react-rating-stars-component";
 const Product = () => {
   const [thumbsSwiper, setThumbsSwiper] = useState(null);
-  const [rating, setRating] = useState(4)
+  const [rating, setRating] = useState(4);
   const [product, setProduct] = useState([]);
   const [productImages, setProductImages] = useState([]);
   const [productPorts, setProductPorts] = useState([]);
@@ -52,7 +53,7 @@ const Product = () => {
       if(productPorts.length>0){
 
         if(portSelected==null){
-          toast.error('Please Select a size')
+          toast.error('Please Select a Port')
         } else{
           addToCart(product,portSelected)
           toast.success('Product successfully added to Cart')
@@ -168,15 +169,20 @@ const Product = () => {
           <div className="col-md-7">
             <h2>{product.title}</h2>
 
-            <div className="d-flex ">
-            <Rating
-            size={20}
-            readonly
-      initialValue={rating}
- 
+            <div className="d-flex align-items-center">
+      <ReactStars
+        count={5}
+        value={rating}
+        size={30}
+        isHalf={true}
+        edit={false}
+        activeColor="#ffd700"
       />
-      <span className="pt-1 ps-2">10 Reviews</span>
-            </div>
+      <span className="ms-2">10 Reviews</span>
+    </div>
+
+
+
             <div className="price h3 py-3">
             $ {product.price} &nbsp; 
                         {
