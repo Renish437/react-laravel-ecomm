@@ -16,7 +16,8 @@ $primary-black: #343b48;
 $secondary-color:#0284FF;
 $tertiary-color-1:#2F4858;
 
-$tertiary-color:#5e3155;
+// $tertiary-color:#5e3155;
+$tertiary-color:#803a71;
 body{
     font-family: $primary-font;
     font-size: 1em;
@@ -422,7 +423,7 @@ filter:  brightness(2.3)  ;
 .logo-foot{
    width: 250px;
 height: 50px;
-filter:  brightness(1.2) hue-rotate(10deg);
+
 }
 
   .rating-container {

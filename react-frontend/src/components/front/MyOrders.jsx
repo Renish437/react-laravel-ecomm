@@ -1,46 +1,47 @@
 import React, { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
-import Sidebar from '../../common/Sidebar'
-import { adminToken, apiUrl } from '../../common/Http';
-import SkeletonTable3 from '../../common/Loader/SkeletonTable3';
-import NoState from '../../common/NoState';
+import UserSidebar from '../common/UserSidebar'
+import {  apiUrl, userToken } from '../common/Http';
+import NoState from '../common/NoState';
+import SkeletonTable3 from '../common/Loader/SkeletonTable3';
+import { Link } from 'react-router-dom';
 
-const ShowOrders = () => {
-    const [orders, setOrders] = useState([]);
-  const [loader, setLoader] = useState(false);
-    const fetchOrders = async () => {
-      setLoader(true);
-      const res = await fetch(apiUrl + "/orders", {
-        method: "GET",
-        headers: {
-          "Content-type": "application/json",
-          Accept: "application/json",
-          Authorization: `Bearer ${adminToken()} `,
-        },
-      })
-        .then((res) => res.json())
-        .then((result) => {
-          console.log(result);
-          if (result.status == 200) {
-            setOrders(result.data);
-            setLoader(false);
-          } else {
-            console.error("Something Went Wrong");
-          }
-        });
-    };
-    useEffect(() => {
-      fetchOrders();
-    }, []);
+const MyOrders = () => {
+      const [orders, setOrders] = useState([]);
+      const [loader, setLoader] = useState(false);
+     const fetchOrders = async () => {
+          setLoader(true);
+          const res = await fetch(apiUrl + "/get-orders", {
+            method: "GET",
+            headers: {
+              "Content-type": "application/json",
+              Accept: "application/json",
+              Authorization: `Bearer ${userToken()} `,
+            },
+          })
+            .then((res) => res.json())
+            .then((result) => {
+              console.log(result);
+              setLoader(false);
+              if (result.status == 200) {
+                setOrders(result.data);
+               
+              } else {
+                console.error("Something Went Wrong");
+              }
+            });
+        };
+        useEffect(() => {
+          fetchOrders();
+        }, []);
   return (
     <div className="container">
     <div className="row">
       <div className="d-flex justify-content-between mt-5 pb-3">
-      <h4 className="h4 mb-0 pb-0">Categories / Edit</h4>
-      {/* <Link to='/admin/categories' className="btn btn-primary link">Back</Link> */}
+      <h4 className="h4 pb-0 mb-0">My Orders</h4>
+      {/* <Link to='/admin/categories' className="link btn btn-primary">Back</Link> */}
       </div>
       <div className="col-md-3">
-        <Sidebar />
+        <UserSidebar />
       </div>
       <div className="col-md-9">
       <div className="card shadow">
@@ -49,7 +50,7 @@ const ShowOrders = () => {
         {loader == false && orders.length == 0 && (
                 <NoState text="Orders not found" />
               )}
-              {orders && orders.length > 0 && (
+                 {orders && orders.length > 0 && (
                 <div className="table table-striped">
             <thead>
                 <tr>
@@ -67,7 +68,7 @@ const ShowOrders = () => {
                     orders.map((order,i)=>(
                     <tr key={i}>
                         <td>
-                           <Link className="link" to={`/admin/orders/${order.id}`}> {order.id}</Link>
+                           <Link className="link" to={`/account/orders/details/${order.id}`}> {order.id}</Link>
                             </td>
                         <td>{order.name}</td>
                         <td>{order.email}</td>
@@ -91,7 +92,6 @@ const ShowOrders = () => {
             </tbody>
         </div>
               )}
-        
         </div>
       </div>
       </div>
@@ -100,4 +100,4 @@ const ShowOrders = () => {
   )
 }
 
-export default ShowOrders
+export default MyOrders

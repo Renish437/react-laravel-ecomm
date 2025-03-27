@@ -13,7 +13,7 @@ const UserSidebar = () => {
     </li>
    
     <li>
-      <Link className='link' to={'#'}>Orders</Link>
+      <Link className='link' to={'/account/orders'}>Orders</Link>
     </li>
     
    <li>

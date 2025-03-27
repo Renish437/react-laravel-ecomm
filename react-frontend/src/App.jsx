@@ -29,7 +29,8 @@ import { RequireAuth } from "./components/RequireAuth";
 import SuccessMessage from "./components/SuccessMessage";
 import ShowOrders from "./components/admin/orders/ShowOrders";
 import OrderDetail from "./components/admin/orders/OrderDetail";
-
+import MyOrders from "./components/front/MyOrders";
+import {default as UserOrderDetail} from "./components/front/OrderDetail";
 
 function App() {
   const router = createBrowserRouter([
@@ -75,6 +76,14 @@ function App() {
           ),
         },
         {
+          path: "/account/orders",
+          element: (
+            <RequireAuth>
+              <MyOrders />
+            </RequireAuth>
+          ),
+        },
+        {
           path: "/checkout",
           element: (
             <RequireAuth>
@@ -87,6 +96,14 @@ function App() {
           element: (
             <RequireAuth>
               <SuccessMessage/>
+            </RequireAuth>
+          ),
+        },
+        {
+          path: "/account/orders/details/:id",
+          element: (
+            <RequireAuth>
+              <UserOrderDetail/>
             </RequireAuth>
           ),
         },

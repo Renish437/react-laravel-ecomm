@@ -131,7 +131,7 @@ useEffect(() => {
                 </table>
               </div>
               <div className="text-center">
-                <button className="btn btn-primary">View Order Details</button>
+                <Link to={`/account/orders/details/${order.id}`} className="btn btn-primary">View Order Details</Link>
                 <Link to={'/shop'} className="btn btn-outline-secondary ms-2">Continue Shopping</Link>
               </div>
             </div>
