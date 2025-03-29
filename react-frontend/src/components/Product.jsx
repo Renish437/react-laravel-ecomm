@@ -53,7 +53,7 @@ const Product = () => {
       if(productPorts.length>0){
 
         if(portSelected==null){
-          toast.error('Please Select a Port')
+          toast.error('Please Select a Storage')
         } else{
           addToCart(product,portSelected)
           toast.success('Product successfully added to Cart')

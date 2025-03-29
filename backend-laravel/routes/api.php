@@ -33,6 +33,8 @@ Route::group(['middleware'=>['auth:sanctum','checkUserRole']],function(){
     Route::post('save-order',[OrderController::class,'saveOrder']);
     Route::get('get-order-details/{id}',[AccountController::class,'getOrderDetails']);
     Route::get('get-orders',[AccountController::class,'getOrders']);
+    Route::get('get-profile-details',[AccountController::class,'getUserDetails']);
+    Route::post('update-profile',[AccountController::class,'updateProfile']);
 });
 
 Route::group(['middleware'=>['auth:sanctum','checkAdminRole']],function(){

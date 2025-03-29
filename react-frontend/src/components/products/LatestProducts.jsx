@@ -2,8 +2,11 @@ import React, { useEffect, useState } from 'react'
 import ProductImg1 from "../../assets/images/eight.jpg"
 import { Link } from 'react-router-dom'
 import { apiUrl } from '../common/Http'
+import { set } from 'react-hook-form'
+import Loader from '../common/Loader/Loader'
 const LatestProducts = () => {
   const [products,setProducts]=useState([]);
+  const [loading,setLoading]=useState(true);
   const latestProducts=async()=>{
    await fetch(apiUrl+'/get-latest-products',{
       method:'GET',
@@ -14,7 +17,7 @@ const LatestProducts = () => {
     }).then(res=>res.json())
     .then(result=>{
       setProducts(result.data);
-      
+      setLoading(false);
     })
 
   }
@@ -26,7 +29,11 @@ const LatestProducts = () => {
     <div className="container">
       <h2>New Arrivals</h2>
     
-      <div className="row mt-4">
+    {
+      loading==true && <Loader/>  
+    }
+    {
+      loading==false &&   <div className="row mt-4">
       {
         products && products.map(product=>{
           return(
@@ -38,7 +45,7 @@ const LatestProducts = () => {
                </Link>
             </div>
             <div className="card-body pt-3">
-               <Link to={`/product/${product.id}`} className='link'>{product.title}</Link>
+               <Link to={`/product/${product.id}`} className='link line-clamp-1'>{product.title}</Link>
               <div className="price">
                 $ {product.price} &nbsp; 
                 {
@@ -56,6 +63,7 @@ const LatestProducts = () => {
       }
        
       </div>
+    }
     </div>
    </section>
   )

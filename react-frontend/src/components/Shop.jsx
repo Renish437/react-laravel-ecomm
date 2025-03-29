@@ -3,9 +3,12 @@ import { Link, useSearchParams } from 'react-router-dom'
 import ProductImg1 from "../assets/images/eleven.jpg"
 import { apiUrl } from './common/Http';
 import { Pagination } from 'react-bootstrap';
+import { set } from 'react-hook-form';
+import Loader from './common/Loader/Loader';
 
 
 const Shop = () => {
+  const [loading,setLoading]=useState(true);
   const [categories,setCategories]=useState([]);
   const [brands,setBrands]=useState([]);
   const [products,setProducts]=useState([]);
@@ -30,11 +33,14 @@ const Shop = () => {
         }).then(res=>res.json())
         .then(result=>{
           if(result.status==200){
+          
             setCategories(result.data);
+            setLoading(false);
             console.log(result.data);
             
           }
           else{
+            setLoading(false);
             console.log('Something went wrong');
             
           }
@@ -51,7 +57,9 @@ const Shop = () => {
         }).then(res=>res.json())
         .then(result=>{
           if(result.status==200){
+            
             setBrands(result.data);
+            setLoading(false);
             console.log(result.data);
             
           }
@@ -91,6 +99,7 @@ const Shop = () => {
         .then(result=>{
           if(result.status==200){
             setProducts(result.data);
+            setLoading(false);
             console.log(result.data);
             
           }
@@ -140,28 +149,38 @@ const Shop = () => {
     <div className="card shadow border-0 mb-3">
       <div className="card-body motion-preset-slide-right motion-delay-500">
         <h3 className='mb-3'>Categories</h3>
-        <ul>
-          {
-            categories && categories.map(category=>{
-              return(
-                <li key={`cat-${category.id}`} className='mb-2'>
-                <input type="checkbox"
-                defaultChecked={searchParams.get('category')? searchParams.get('category').includes(category.id):false}
-                 value={category.id} onClick={handleCategory} name="" id="" />
-                <label htmlFor="" className='ps-2'>{category.name}</label>
-              </li>
-              )
-            })
-          }
-         
-         
-        </ul>
+    {
+      loading==true && <Loader/>
+    }
+    {
+      loading==false &&     <ul>
+      {
+        categories && categories.map(category=>{
+          return(
+            <li key={`cat-${category.id}`} className='mb-2'>
+            <input type="checkbox"
+            defaultChecked={searchParams.get('category')? searchParams.get('category').includes(category.id):false}
+             value={category.id} onClick={handleCategory} name="" id="" />
+            <label htmlFor="" className='ps-2'>{category.name}</label>
+          </li>
+          )
+        })
+      }
+     
+     
+    </ul>
+    }
       </div>
     </div>
     <div className="card shadow border-0 mb-3">
       <div className="card-body motion-preset-slide-right motion-delay-500">
         <h3 className='mb-3'>Brands</h3>
-        <ul>
+        {
+      loading==true && <Loader/>
+    }
+    {
+      loading==false &&
+      <ul>
         {
             brands && brands.map(brand=>{
               return(
@@ -176,6 +195,8 @@ const Shop = () => {
           }
          
         </ul>
+    }
+        
       </div>
     </div>
   </div>
@@ -183,34 +204,40 @@ const Shop = () => {
 
 
   <div className="col-md-9 motion-preset-slide-up motion-delay-500">
-    <div className="row pb-4">
-      {
-        products && products.map(product=>{
-          return(
-            <div key={`product-${product.id}`} className="col-md-4 col-6 hover:scale-[1.02] duration-500 hover:cursor-pointer">
-            <div className="product card border-0">
-              <div className="card-img">
-              <Link to={`/product/${product.id}`} className='link'> <img src={product.image_url} alt="" className='w-100' /></Link>
-              </div>
-              <div className="card-body pt-3">
-                <Link to={`/product/${product.id}`} className='link'>{product.title}</Link>
-                <div className="price">
-                $ {product.price} &nbsp; 
-                        {
-                          product.compare_price && <span className='text-decoration-line-through'>${ product.compare_price }</span>
-                        }
-                </div>
-              </div>
-    
+  {
+  loading==true && <Loader/>
+}
+{
+  loading==false && <div className="row pb-4">
+  {
+    products && products.map(product=>{
+      return(
+        <div key={`product-${product.id}`} className="col-md-4 col-6 hover:scale-[1.02] duration-500 hover:cursor-pointer">
+        <div className="product card border-0">
+          <div className="card-img">
+          <Link to={`/product/${product.id}`} className='link'> <img src={product.image_url} alt="" className='w-100' /></Link>
+          </div>
+          <div className="card-body pt-3">
+            <Link to={`/product/${product.id}`} className='link  line-clamp-1'>{product.title}</Link>
+            <div className="price">
+            $ {product.price} &nbsp; 
+                    {
+                      product.compare_price && <span className='text-decoration-line-through'>${ product.compare_price }</span>
+                    }
             </div>
           </div>
-          )
-        })
-      }
-   
 
-       
-    </div>
+        </div>
+      </div>
+      )
+    })
+  }
+
+
+   
+</div>
+}
+    
     <Pagination/>
   </div>
 </div>

@@ -24,7 +24,7 @@ import ShowProduct from "./components/admin/product/ShowProduct";
 import EditProduct from "./components/admin/product/EditProduct";
 import Register from "./components/Register";
 import Logins from "./components/Logins";
-import Profile from "./components/Profile";
+import Profile from "./components/front/Profile";
 import { RequireAuth } from "./components/RequireAuth";
 import SuccessMessage from "./components/SuccessMessage";
 import ShowOrders from "./components/admin/orders/ShowOrders";
