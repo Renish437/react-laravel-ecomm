@@ -28,7 +28,7 @@ const Sidebar = () => {
     <Link className='link' to={'#'}>Users</Link>
   </li>
   <li>
-    <Link className='link' to={'#'}>Shipping</Link>
+    <Link className='link' to={'/admin/shipping'}>Shipping</Link>
   </li>
   <li>
     <Link className='link' to={'#'}>Change Password</Link>

@@ -1,9 +1,11 @@
 import { createContext, useEffect, useState } from "react";
+import { apiUrl } from "../common/Http";
 
 export const CartContext=createContext();
 export const CartProvider=({children})=>{
     // const [cartData,setCartData]=useState(JSON.parse(localStorage.getItem('cart'))||[]);
     const [cartData,setCartData]=useState([]);
+    const [shippingCost,setShippingCost]=useState(0);
     useEffect(() => {
         const storedCart = localStorage.getItem('cart');
         if (storedCart) {
@@ -91,8 +93,11 @@ export const CartProvider=({children})=>{
         return subtotal;
     }
     const shipping=()=>{
-
-        return 0;
+   let shippingAmount=0;
+   cartData.map(item=>{
+    shippingAmount+=item.qty*shippingCost;
+   })
+        return shippingAmount;
     }
     const grandTotal=()=>{
         return subTotal()+shipping();
@@ -113,6 +118,27 @@ export const CartProvider=({children})=>{
     const getQty = () => {
         return cartData?.reduce((total, item) => total + (Number(item.qty) || 0), 0) || 0;
     };
+    useEffect(() => {
+         fetch(apiUrl + "/get-shipping-front", {
+                                method: "GET",
+                                headers: {
+                                    "Content-type": "application/json",
+                                    Accept: "application/json",
+                                  
+                                },
+                            })
+                                .then((res) => res.json())
+                                .then((result) => {
+                                    console.log(result);
+                                    if (result.status == 200) {
+                                        setShippingCost(result.data.shipping_charge);
+                                    } else {
+                                        setShippingCost(0);
+                                        console.error("Something Went Wrong");
+                                    }
+                                });
+                        }
+      , []);
     return(
 <CartContext.Provider value={{ addToCart,cartData,setCartData,grandTotal,subTotal,shipping,updateCartItem,deleteCartItem,getQty }}>
     { children }

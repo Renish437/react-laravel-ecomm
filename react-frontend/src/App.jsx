@@ -31,6 +31,7 @@ import ShowOrders from "./components/admin/orders/ShowOrders";
 import OrderDetail from "./components/admin/orders/OrderDetail";
 import MyOrders from "./components/front/MyOrders";
 import {default as UserOrderDetail} from "./components/front/OrderDetail";
+import Shipping from "./components/admin/shipping/Shipping";
 
 function App() {
   const router = createBrowserRouter([
@@ -206,6 +207,14 @@ function App() {
           element: (
             <AdminRequireAuth>
              <OrderDetail/>
+            </AdminRequireAuth>
+          ),
+        },
+        {
+          path: "/admin/shipping",
+          element: (
+            <AdminRequireAuth>
+             <Shipping/>
             </AdminRequireAuth>
           ),
         },

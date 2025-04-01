@@ -6,6 +6,7 @@ use App\Http\Controllers\admin\CategoryController;
 
 use App\Http\Controllers\admin\PortController;
 use App\Http\Controllers\admin\ProductController;
+use App\Http\Controllers\admin\ShippingController;
 use App\Http\Controllers\admin\TempImageController;
 use App\Http\Controllers\frontend\AccountController;
 use App\Http\Controllers\frontend\OrderController;
@@ -23,7 +24,7 @@ Route::get('get-categories',[ FrontProductController::class,'getCategories']);
 Route::get('get-brands',[ FrontProductController::class,'getBrands']);
 Route::get('get-products',[ FrontProductController::class,'getProducts']);
 Route::get('get-product/{id}',[ FrontProductController::class,'getProduct']);
-
+Route::get('get-shipping-front',[\App\Http\Controllers\frontend\ShippingController::class,'getShipping']);
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -33,8 +34,10 @@ Route::group(['middleware'=>['auth:sanctum','checkUserRole']],function(){
     Route::post('save-order',[OrderController::class,'saveOrder']);
     Route::get('get-order-details/{id}',[AccountController::class,'getOrderDetails']);
     Route::get('get-orders',[AccountController::class,'getOrders']);
+
     Route::get('get-profile-details',[AccountController::class,'getUserDetails']);
     Route::post('update-profile',[AccountController::class,'updateProfile']);
+  
 });
 
 Route::group(['middleware'=>['auth:sanctum','checkAdminRole']],function(){
@@ -54,7 +57,10 @@ Route::get('change-product-default-image', [ProductController::class,'updateDefa
 Route::delete('delete-product-image/{id}', [ProductController::class,'deleteProductImage']);
 Route::get('orders',[AdminOrderController::class,'index']);
 Route::get('orders/{id}',[AdminOrderController::class,'details']);
+
 Route::post('update-order/{id}',[AdminOrderController::class,'updateOrder']);
+Route::get('get-shipping',[ShippingController::class,'getShipping']);
+Route::post('save-shipping',[ShippingController::class,'updateShipping']);
 });
 
 // Route::middleware(['cors'])->post('temp-images', [TempImageController::class, 'store']);
