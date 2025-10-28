@@ -4,10 +4,11 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import 'swiper/css/pagination';
 import 'swiper/css/autoplay';
-import Slider2Img from "../../assets/images/img1.jpg";
-import Slider1Img from "../../assets/images/img2.jpg";
+import Slider2Img from "../../assets/images/img2.jpg";
+import Slider1Img from "../../assets/images/img1.jpg";
 import Slider3Img from "../../assets/images/img3.jpg";
 import Slider4Img from "../../assets/images/img4.jpg";
+
 import { Autoplay, Pagination,Navigation } from 'swiper/modules';
 
 const HeroSection = () => {
@@ -17,9 +18,34 @@ const HeroSection = () => {
     // Just to ensure swiper gets initialized
     console.log("Swiper component mounted");
   }, []);
-
+  const zoomOutStyle = {
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+    height: '100vh',
+    width: '100%',
+    backgroundRepeat: 'no-repeat',
+    animation: 'zoomOutSmooth 7s ease-out forwards',
+  };
   return (
     <section className="section-1">
+       <style>
+        {`
+          @keyframes zoomOutSmooth {
+            0% {
+              transform: scale(1); /* slightly zoomed in */
+            }
+            100% {
+              transform: scale(1); /* natural size */
+            }
+          }
+
+          .swiper-slide .content {
+            transition: transform 7s ease-out;
+            will-change: transform;
+          }
+        `}
+      </style>
+
       <Swiper
         spaceBetween={0}
         slidesPerView={1}
@@ -49,10 +75,10 @@ const HeroSection = () => {
           <div className="content" style={{ backgroundImage: `url(${Slider1Img})` }}></div>
         </SwiperSlide>
         <SwiperSlide>
-          <div className="content" style={{ backgroundImage: `url(${Slider3Img})` }}></div>
+          <div className="content" style={{ ...zoomOutStyle, backgroundImage: `url(${Slider3Img})` }}></div>
         </SwiperSlide>
         <SwiperSlide>
-          <div className="content" style={{ backgroundImage: `url(${Slider4Img})` }}></div>
+          <div className="content" style={{  ...zoomOutStyle, backgroundImage: `url(${Slider4Img})` }}></div>
         </SwiperSlide>
       
       </Swiper>

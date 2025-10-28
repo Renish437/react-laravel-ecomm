@@ -38,7 +38,7 @@ const FeaturedProducts = () => {
              return(
               <div className="col-md-3 col-6" key={product.id}>
              <div className="product card border-0">
-               <div className="card-img">
+               <div className="card-img ">
                <Link to={`/product/${product.id}`} className='link'><img src={product.image_url} alt="" className='w-100' /></Link>
                </div>
                <div className="card-body pt-3">

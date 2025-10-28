@@ -120,7 +120,7 @@ const ShowBrands = () => {
                             <td>
                               <Link
                                 to={`/admin/brands/edit/${brand.id}`}
-                                className="link text-primary"
+                                className="link primary-text"
                               >
                                 <i className="bi bi-pencil-square"></i>
                               </Link>

@@ -243,7 +243,7 @@ if($validator->fails()){
 
       public function saveProductImage(Request $request){
         $validator=Validator::make(request()->all(),[
-            'image'=> 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'image'=> 'required|image|max:5120',
         ]);
 
         if($validator->fails()){

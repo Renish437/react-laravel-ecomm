@@ -5,6 +5,7 @@ import { apiUrl } from './common/Http';
 import { Pagination } from 'react-bootstrap';
 import { set } from 'react-hook-form';
 import Loader from './common/Loader/Loader';
+import Aos from 'aos';
 
 
 const Shop = () => {
@@ -135,18 +136,28 @@ const Shop = () => {
     fetchBrands();
     fetchProducts();
   },[catChecked,brandChecked])
+
+    useEffect(() => {
+      fetchCategories();
+      Aos.init({
+        duration: 800,
+        easing: 'ease-in-out',
+        once: true,
+        offset: 100,
+      });
+    }, []);
     return (
     <div>
       <div className="container">
-      <nav aria-label="breadcrumb mt-3">
-  <li  style={{ listStyle:'none' }} className='py-4 d-flex breadcrumb'>
+      <nav aria-label="breadcrumb mt-3" data-aos="fade-right">
+  <li  style={{ listStyle:'none' }} className='py-4 d-flex  breadcrumb'>
     <li className="breadcrumb-item" ><Link to={'/'}>Home</Link></li>
     <li className="breadcrumb-item active" aria-current="page">Shop</li>
   </li>
 </nav>
 <div className="row ">
   <div className="col-md-3">
-    <div className="card shadow border-0 mb-3">
+    <div className="card shadow border-0 mb-3" data-aos="fade-right">
       <div className="card-body motion-preset-slide-right motion-delay-500">
         <h3 className='mb-3'>Categories</h3>
     {
@@ -158,10 +169,10 @@ const Shop = () => {
         categories && categories.map(category=>{
           return(
             <li key={`cat-${category.id}`} className='mb-2'>
-            <input type="checkbox"
+            <input id={`check-category-${category.id}`} type="checkbox"
             defaultChecked={searchParams.get('category')? searchParams.get('category').includes(category.id):false}
-             value={category.id} onClick={handleCategory} name="" id="" />
-            <label htmlFor="" className='ps-2'>{category.name}</label>
+             value={category.id} onClick={handleCategory} name="" />
+            <label htmlFor={`check-category-${category.id}`} className='ps-2'>{category.name}</label>
           </li>
           )
         })
@@ -172,7 +183,7 @@ const Shop = () => {
     }
       </div>
     </div>
-    <div className="card shadow border-0 mb-3">
+    <div className="card shadow border-0 mb-3" data-aos="fade-right">
       <div className="card-body motion-preset-slide-right motion-delay-500">
         <h3 className='mb-3'>Brands</h3>
         {
@@ -185,10 +196,10 @@ const Shop = () => {
             brands && brands.map(brand=>{
               return(
                 <li key={`brand-${brand.id}`} className='mb-2'>
-                <input type="checkbox"
+                <input id={`check-brand-${brand.id}`} type="checkbox"
                 defaultChecked={searchParams.get('brand')? searchParams.get('brand').includes(brand.id):false}
-                 value={brand.id} onClick={handleBrand} name="" id="" />
-                <label htmlFor="" className='ps-2'>{brand.name}</label>
+                 value={brand.id} onClick={handleBrand} name=""  />
+                <label htmlFor={`check-brand-${brand.id}`} className='ps-2'>{brand.name}</label>
               </li>
               )
             })
@@ -203,7 +214,7 @@ const Shop = () => {
 
 
 
-  <div className="col-md-9 motion-preset-slide-up motion-delay-500">
+  <div className="col-md-9 motion-preset-slide-up motion-delay-500" data-aos="fade-up">
   {
   loading==true && <Loader/>
 }

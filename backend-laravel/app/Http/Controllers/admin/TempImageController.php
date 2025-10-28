@@ -14,7 +14,7 @@ class TempImageController extends Controller
     public function store(Request $request){
 
         $validator=Validator::make(request()->all(),[
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:5120', // 10MB
+            'image' => 'required|image|max:5120', // 10MB
   //5MB Image can load
         ]);
 

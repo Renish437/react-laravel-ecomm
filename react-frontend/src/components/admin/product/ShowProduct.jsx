@@ -137,7 +137,7 @@ const ShowProduct = () => {
                             <td>
                               <Link
                                 to={`/admin/products/edit/${product.id}`}
-                                className="link text-primary"
+                                className="link primary-text"
                               >
                                 <i className="bi bi-pencil-square"></i>
                               </Link>

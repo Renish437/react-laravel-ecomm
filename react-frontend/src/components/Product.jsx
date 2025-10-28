@@ -17,6 +17,7 @@ import { CartContext } from "./context/Cart";
 import { toast } from "react-toastify";
 import Pagination from "./Pagination";
 import ReactStars from "react-rating-stars-component";
+import Aos from "aos";
 const Product = () => {
   const [thumbsSwiper, setThumbsSwiper] = useState(null);
   const [rating, setRating] = useState(4);
@@ -53,7 +54,7 @@ const Product = () => {
       if(productPorts.length>0){
 
         if(portSelected==null){
-          toast.error('Please Select a Storage')
+          toast.warning('Please Select a Color')
         } else{
           addToCart(product,portSelected)
           toast.success('Product successfully added to Cart')
@@ -67,6 +68,17 @@ const Product = () => {
       fetchProducts();
     
     }, [])
+
+
+      useEffect(() => {
+         
+          Aos.init({
+            duration: 800,
+            easing: 'ease-in-out',
+            once: true,
+            offset: 100,
+          });
+        }, []);
     
 
   return (
@@ -74,7 +86,7 @@ const Product = () => {
       <div className="container product-detail">
         <div className="row">
           <div className="col-md-12">
-            <nav aria-label="breadcrumb mt-3">
+            <nav aria-label="breadcrumb mt-3" data-aos="fade-right">
               <li
                
                 style={{ listStyle: "none" }}
@@ -94,7 +106,7 @@ const Product = () => {
           </div>
         </div>
         <div className="row mb-5">
-          <div className="col-md-5">
+          <div className="col-md-5" data-aos="fade-right">
             <div className="row">
               <div className="col-2">
                 <Swiper
@@ -153,7 +165,7 @@ const Product = () => {
                       <img
                         src={product_image.image_url}
                         alt=""
-                        height={100}
+                        height={400}
                         className="w-100"
                       />
                     </div>
@@ -166,7 +178,7 @@ const Product = () => {
               </div>
             </div>
           </div>
-          <div className="col-md-7">
+          <div className="col-md-7" data-aos="fade-up">
             <h2>{product.title}</h2>
 
             <div className="d-flex align-items-center">

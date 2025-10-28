@@ -50,7 +50,7 @@ const ShowOrders = () => {
                 <NoState text="Orders not found" />
               )}
               {orders && orders.length > 0 && (
-                <div className="table table-striped">
+               <table className="table table-striped table-hover">
             <thead>
                 <tr>
                     <th>#Id</th>
@@ -67,7 +67,7 @@ const ShowOrders = () => {
                     orders.map((order,i)=>(
                     <tr key={i}>
                         <td>
-                           <Link className="link" to={`/admin/orders/${order.id}`}> {order.id}</Link>
+                           <Link className="link primary-text" to={`/admin/orders/${order.id}`}> {order.id}</Link>
                             </td>
                         <td>{order.name}</td>
                         <td>{order.email}</td>
@@ -89,7 +89,7 @@ const ShowOrders = () => {
                 }
                
             </tbody>
-        </div>
+        </table>
               )}
         
         </div>

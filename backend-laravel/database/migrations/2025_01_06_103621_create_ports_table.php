@@ -14,7 +14,10 @@ return new class extends Migration
         Schema::create('ports', function (Blueprint $table) {
             $table->id();
             $table->string('name'); 
-            // $table->string('storage')->nullable(); 
+         
+            $table->timestamps();
+        });
+           // $table->string('storage')->nullable(); 
             // $table->string('size')->nullable(); // e.g., 6.7 inches
             // $table->string('color')->nullable();
             // $table->string('processor')->nullable();
@@ -24,8 +27,6 @@ return new class extends Migration
             // $table->string('os')->nullable(); // Operating System
             // $table->boolean('water_resistant')->default(false);
             // $table->string('warranty')->nullable();
-            $table->timestamps();
-        });
     }
 
     /**

@@ -7,6 +7,15 @@ use Illuminate\Database\Eloquent\Model;
 class Product extends Model
 {
     //
+
+    protected $fillable = ['name', 'price', 'category_id', 'status'];
+
+   
+
+
+    // Product has many order items
+ 
+    
     protected $appends=['image_url'];
 
     public function getImageUrlAttribute(){
@@ -21,5 +30,19 @@ class Product extends Model
     function product_ports(){
         return $this->hasMany(ProductSpec::class);
     }
+    public function category()
+{
+    return $this->belongsTo(Category::class);
+}
+
+public function brand()
+{
+    return $this->belongsTo(Brand::class);
+}
+   public function orderItems()
+    {
+        return $this->hasMany(OrderItem::class);
+    }
+
 
 }

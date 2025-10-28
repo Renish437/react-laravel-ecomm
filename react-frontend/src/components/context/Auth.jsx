@@ -10,6 +10,7 @@ const login=(user)=>{
     setUser(user)
 
 }
+const isLoggedIn=()=>!!user;
 const logout=()=>{
     localStorage.removeItem('userInfo');
     setUser(null);
@@ -17,7 +18,8 @@ const logout=()=>{
 return <AuthContext.Provider value={{ 
     user,
     login,
-    logout
+    logout,
+    isLoggedIn
  }}>
     {children}
 </AuthContext.Provider>

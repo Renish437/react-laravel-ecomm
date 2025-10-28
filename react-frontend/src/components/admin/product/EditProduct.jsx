@@ -57,34 +57,38 @@ const EditProduct = ({ placeholder }) => {
   } = useForm({
     defaultValues: async () => {
       const res = await fetch(apiUrl + "/products/" + params.id, {
-        method: "GET",
-        headers: {
-          "Content-type": "application/json",
-          Accept: "application/json",
-          Authorization: `Bearer ${adminToken()}`,
-        },
-      })
-        .then(res => res.json())
-        .then(result => {
-          console.log(result);
-          setProductImages(result.data.product_images);
-          setPortsChecked(result.productPorts);
-          reset({
-            title: result.data.title,
-            category: result.data.category_id,
-            brand: result.data.brand_id,
-            sku: result.data.sku,
-            qty: result.data.qty,
-            short_description: result.data.short_description,
-            description: result.data.description,
-            price: result.data.price,
-            compare_price: result.data.compare_price,
-            barcode: result.data.barcode,
-            status: result.data.status,
-            is_featured: result.data.is_featured,
-          });
-          // setBrands(result.data);
-        });
+  method: "GET",
+  headers: {
+    "Content-type": "application/json",
+    Accept: "application/json",
+    Authorization: `Bearer ${adminToken()}`,
+  },
+})
+  .then(res => res.json())
+  .then(result => {
+    console.log(result);
+    setProductImages(result.data.product_images);
+    setPortsChecked(result.productPorts);
+
+    // Set description for JoditEditor
+    setContent(result.data.description || "");
+
+    reset({
+      title: result.data.title,
+      category: result.data.category_id,
+      brand: result.data.brand_id,
+      sku: result.data.sku,
+      qty: result.data.qty,
+      short_description: result.data.short_description,
+      description: result.data.description,
+      price: result.data.price,
+      compare_price: result.data.compare_price,
+      barcode: result.data.barcode,
+      status: result.data.status,
+      is_featured: result.data.is_featured,
+    });
+  });
+
     },
   });
 

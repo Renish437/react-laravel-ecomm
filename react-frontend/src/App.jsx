@@ -32,8 +32,26 @@ import OrderDetail from "./components/admin/orders/OrderDetail";
 import MyOrders from "./components/front/MyOrders";
 import {default as UserOrderDetail} from "./components/front/OrderDetail";
 import Shipping from "./components/admin/shipping/Shipping";
+import { useEffect } from "react";
+import Aos from "aos";
+import ShowPorts from "./components/admin/ports/ShowPorts";
+import CreatePort from "./components/admin/ports/CreatePort";
+import EditPort from "./components/admin/ports/EditPort";
+import ChangePassword from "./components/admin/change-password/ChangePassword";
+import EditUser from "./components/admin/users/EditUser";
+import CreateUser from "./components/admin/users/CreateUser";
+import ShowUsers from "./components/admin/users/ShowUsers";
+import UserChangePassword from "./components/admin/change-password/UserChangePassword";
 
 function App() {
+    useEffect(() => {
+    Aos.init({
+      duration: 800, // Animation duration (in ms)
+      easing: "ease-in-out", // Smooth animation
+      once: true, // Whether animation should happen only once
+      offset: 100, // Distance to start the animation (px)
+    });
+  }, []);
   const router = createBrowserRouter([
     {
       path: "/",
@@ -108,6 +126,14 @@ function App() {
             </RequireAuth>
           ),
         },
+        {
+  path: "/account/change-password",
+  element: (
+    <RequireAuth>
+      <UserChangePassword />
+    </RequireAuth>
+  ),
+},
         
         // Admin Routes
         {
@@ -171,6 +197,30 @@ function App() {
           ),
         },
         {
+  path: "/admin/colors",
+  element: (
+    <AdminRequireAuth>
+      <ShowPorts />
+    </AdminRequireAuth>
+  ),
+},
+{
+  path: "/admin/colors/create",
+  element: (
+    <AdminRequireAuth>
+      <CreatePort />
+    </AdminRequireAuth>
+  ),
+},
+{
+  path: "/admin/colors/edit/:id",
+  element: (
+    <AdminRequireAuth>
+      <EditPort />
+    </AdminRequireAuth>
+  ),
+},
+        {
           path: "/admin/products",
           element: (
             <AdminRequireAuth>
@@ -218,6 +268,38 @@ function App() {
             </AdminRequireAuth>
           ),
         },
+        {
+  path: "/admin/users",
+  element: (
+    <AdminRequireAuth>
+      <ShowUsers />
+    </AdminRequireAuth>
+  ),
+},
+{
+  path: "/admin/users/create",
+  element: (
+    <AdminRequireAuth>
+      <CreateUser />
+    </AdminRequireAuth>
+  ),
+},
+{
+  path: "/admin/users/edit/:id",
+  element: (
+    <AdminRequireAuth>
+      <EditUser />
+    </AdminRequireAuth>
+  ),
+},
+{
+  path: "/admin/change-password",
+  element: (
+    <AdminRequireAuth>
+      <ChangePassword />
+    </AdminRequireAuth>
+  ),
+},
       ],
     },
   ]);

@@ -5,48 +5,57 @@ import { apiUrl } from './common/Http.jsx';
 import { toast } from 'react-toastify';
 import { AuthContext } from './context/Auth.jsx';
 const Logins = () => {
-    const{login}=useContext(AuthContext);
+        const { login } = useContext(AuthContext);
     const {
         register,
         handleSubmit,
+        setError, // <-- make sure to include this
         formState: { errors },
     } = useForm();
     const navigate = useNavigate();
+
     const onSubmit = async (data) => {
         console.log(data);
 
-        const res = await fetch(`${apiUrl}/login`, {
-            method: 'POST',
-            headers: {
-                'Content-type': 'application/json',
-            },
-            body: JSON.stringify(data),
-        }).then(res=>res.json())
-        .then(result=>{
+        try {
+            const res = await fetch(`${apiUrl}/login`, {
+                method: 'POST',
+                headers: {
+                    'Content-type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            });
+
+            const result = await res.json();
             console.log(result);
 
-               if(result.status===200){
-                          const userInfo={
-                            token:result.token,
-                            id:result.id,
-                            name:result.name
-                          }
-                          localStorage.setItem('userInfo',JSON.stringify(userInfo))
-                          login(userInfo);
-                        toast.success('Login Successfully')
-                          navigate('/account');
-                        }
-                      
-            else{
-                const formErrors=result.errors;
+            if (result.status === 200) {
+                const userInfo = {
+                    token: result.token,
+                    id: result.id,
+                    name: result.name,
+                };
+                localStorage.setItem('userInfo', JSON.stringify(userInfo));
+                login(userInfo);
+                toast.success('Login Successfully');
+                navigate('/account');
+            } else if (result.status === 401) {
+                // Unauthorized
+                toast.error(result.message || 'Wrong credentials');
+            } else if (result.status === 400 && result.errors) {
+                // Validation errors
+                const formErrors = result.errors;
                 Object.keys(formErrors).forEach((field) => {
                     setError(field, { message: formErrors[field][0] });
-                  });
-                toast.error(result.message)
+                });
+                toast.error(result.message || 'Validation error');
+            } else {
+                toast.error(result.message || 'Something went wrong');
             }
-            
-        })
-
+        } catch (error) {
+            console.error(error);
+            toast.error('Network error. Please try again.');
+        }
     };
   return (
     <div className="container d-flex justify-content-center py-5">

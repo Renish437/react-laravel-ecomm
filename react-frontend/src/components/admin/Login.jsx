@@ -114,7 +114,7 @@ const Login = () => {
                                     <p className="invalid-feedback">{errors.password.message}</p>
                                 )}
                             </div>
-                            <button type="submit" className="btn btn-secondary">
+                            <button type="submit" className="btn btn-primary d-flex justify-content-end ">
                                 Login
                             </button>
                         </form>

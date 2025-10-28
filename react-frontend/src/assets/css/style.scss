@@ -1,23 +1,21 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+
 
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap');
 @import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css");
 $primary-font: "DM Sans", sans-serif;
 $primary-white: #FFF;
 // $primary-color: #53c4d1;
-$primary-color: #a1206bea;
+$primary-color: #5f15c7;
 // $primary-color: #d427c9;
 $gradient-color:$primary-color ;
 // $primary-black: #2b0934;
-$primary-black: #343b48;
+$primary-black: #2e2b32;
 // $primary-black: #46225e;
 $secondary-color:#0284FF;
 $tertiary-color-1:#2F4858;
 
 // $tertiary-color:#5e3155;
-$tertiary-color:#803a71;
+$tertiary-color:#5f15c7;
 body{
     font-family: $primary-font;
     font-size: 1em;
@@ -25,7 +23,7 @@ body{
     font-weight: 500;
 }
 .bg-dark{
-    background-color: #271c27 !important;
+    background-color: #5f13cb !important;
 }
 
 h1{
@@ -37,7 +35,7 @@ h2{
 }
 
 h3{
-    font-size: 1.3em;
+    font-size: 1.5em;
 }
 
 h4{
@@ -51,12 +49,60 @@ a{
         color: $primary-color;
     }
 }
+.form-control {
+  border-width: 3px;
+  border-color: #e5e7eb; /* Tailwind gray-300 */
+  border-radius: 0.875rem; /* rounded-md */
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  padding: 14px;
+}
+
+.form-control:focus {
+  border-color: #7c3aed; /* Tailwind purple-600 */
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1); /* ring-purple-600/25 */
+  outline: none;
+  
+}
+.form-select {
+  border-width: 3px;
+  border-color: #e5e7eb; /* Tailwind gray-300 */
+  border-radius: 0.875rem; /* rounded-md */
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  padding: 10px;
+}
+
+.form-select:focus {
+  border-color: #7c3aed; /* Tailwind purple-600 */
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1); /* ring-purple-600/25 */
+  outline: none;
+  
+}
+input[type="checkbox"] {
+    width:  1rem;
+    height:  1rem;
+    border-radius: 2px;
+  accent-color: #7c3aed; /* your custom color */
+}
+i{
+    font-size: 1.2rem;
+ 
+}
+label{
+    font-size: 1.2rem;
+}
 .link{
     text-decoration: none;
     color: $primary-black;
     &:hover{
         color: $primary-color;
     }
+}
+.link-2{
+       text-decoration: none;
+    color: white;
+    &:hover{
+        color: #d9d3e6;
+    } 
 }
 
 .primary-text{
@@ -76,7 +122,9 @@ ul{
 }
 
 .container{
-    max-width: 1540px;
+
+    max-width: 1440px;
+    margin: 0 auto;
 }
 
 .nav-tabs{
@@ -100,7 +148,7 @@ ul{
     &.btn-primary{
         background-color: $primary-color;
         border-color: $primary-color;
-        padding: 7px 25px;
+        padding: 10px 25px;
         color: $primary-white;
         &:hover{
             background-color: $primary-black;
@@ -123,7 +171,7 @@ ul{
 }
 header{
     .link{
-        font-size: 1.2em;
+        font-size: 1.4em;
         font-weight: 500;
         color: $primary-black;
       
@@ -158,7 +206,7 @@ footer{
     .swiper{
         .swiper-wrapper{
             .swiper-slide{
-                height: 770px;
+                height: 510px;
               
                 .content{
                     width: 100%;
@@ -182,7 +230,7 @@ footer{
 }
 .section-2{
     .product{
-        padding: 15px;
+        
         box-shadow: 0px 0px 10px rgba($primary-black,0.2);
        
         margin: 15px 5px;
@@ -192,11 +240,13 @@ footer{
             transform: scale(1.02);
          }
         .card-img{
-            overflow: hidden;
+             overflow: hidden;
             cursor: pointer;
-            border-radius: 10px;
+            height: 350px;
+           
            img{
-            border-radius: 10px;
+            // border-top-left-radius: 10px;
+            // border-top-right-radius: 10px;
             transition: all 0.3s ease-in-out;
            }
            &:hover{
@@ -209,7 +259,7 @@ footer{
         .card-body{
             padding: 14px 15px;
             .link{
-                font-size: 1.2em;
+                font-size: 1.2rem;
             }
             .price{
                 font-size: 1.2em;
@@ -222,7 +272,7 @@ footer{
     }
 }
 .product{
-    padding: 15px;
+    
     box-shadow: 0px 0px 10px rgba($primary-black,0.2);
     margin: 15px 5px;
     transition: all 0.3s ease-in-out;
@@ -231,11 +281,16 @@ footer{
         transform: scale(1.02);
      }
     .card-img{
+       
         overflow: hidden;
         cursor: pointer;
-        border-radius: 10px;
+        
+        
+        
        img{
-        border-radius: 10px;
+         height: 350px;
+        //    border-top-left-radius: 10px;
+        //     border-top-right-radius: 10px;
         transition: all 0.3s ease-in-out;
        }
        &:hover{
@@ -248,7 +303,7 @@ footer{
     .card-body{
         padding: 14px 15px;
         .link{
-            font-size: 1.2em;
+            font-size: 1.2rem;
         }
         .price{
             font-size: 1.2em;
@@ -325,11 +380,12 @@ footer{
     ul{
         li{
             border-bottom: 1px solid rgba(6,17,35,0.2);
-            margin-bottom: 2px;
+            margin-bottom: 5px;
 
             .link{
                 display: block;
                 padding: 10px ;
+                font-size: 1.2rem;
                 color:$primary-black;
                 &:hover{
   color: $primary-color;

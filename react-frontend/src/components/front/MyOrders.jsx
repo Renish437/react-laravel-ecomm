@@ -51,7 +51,7 @@ const MyOrders = () => {
                 <NoState text="Orders not found" />
               )}
                  {orders && orders.length > 0 && (
-                <div className="table table-striped">
+                <table className="table table-striped">
             <thead>
                 <tr>
                     <th>#Id</th>
@@ -68,7 +68,7 @@ const MyOrders = () => {
                     orders.map((order,i)=>(
                     <tr key={i}>
                         <td>
-                           <Link className="link" to={`/account/orders/details/${order.id}`}> {order.id}</Link>
+                           <Link className="link primary-text" to={`/account/orders/details/${order.id}`}> {order.id}</Link>
                             </td>
                         <td>{order.name}</td>
                         <td>{order.email}</td>
@@ -90,7 +90,7 @@ const MyOrders = () => {
                 }
                
             </tbody>
-        </div>
+        </table>
               )}
         </div>
       </div>

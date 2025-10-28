@@ -92,7 +92,7 @@ const Register = () => {
                                     <p className="invalid-feedback">{errors.password.message}</p>
                                 )}
                             </div>
-                            <button type="submit" className="btn btn-secondary w-full">
+                            <button type="submit" className="btn btn-primary w-full">
                                 Register
                             </button>
                             <div className="d-flex justify-content-center pt-4 pb-2">

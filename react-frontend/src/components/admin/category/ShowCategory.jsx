@@ -118,7 +118,7 @@ const ShowCategory = () => {
                             <td>
                               <Link
                                 to={`/admin/categories/edit/${category.id}`}
-                                className="link text-primary"
+                                className="link primary-text"
                               >
                                 <i className="bi bi-pencil-square"></i>
                               </Link>

@@ -1,13 +1,13 @@
-module.exports = {
+/** @type {import('tailwindcss').Config} */
+export default {
   content: [
-    './src/**/*.{html,js,jsx,ts,tsx}', // Adjust according to your file structure
-    './public/index.html',
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
     extend: {},
   },
   plugins: [
-    require('tailwindcss-motion')
-  ], 
-}
-
+  
+  ],
+};

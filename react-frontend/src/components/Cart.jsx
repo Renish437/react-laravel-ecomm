@@ -1,7 +1,8 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import ProductImg from '../assets/images/Mens/six.jpg'
 import { CartContext } from "./context/Cart";
+import Aos from "aos";
 
 const Cart = () => {
   const {cartData,grandTotal,subTotal,shipping,updateCartItem,deleteCartItem}=useContext(CartContext);
@@ -11,11 +12,20 @@ const newQty=e.target.value;
 setQty(prev=>({...prev,[itemId]:newQty}))
 updateCartItem(itemId,newQty)
   }
+    useEffect(() => {
+           
+            Aos.init({
+              duration: 800,
+              easing: 'ease-in-out',
+              once: true,
+              offset: 100,
+            });
+          }, []);
   return (
     <div className="container ">
       <div className="row  ">
         <div className="col-md-12">
-          <nav aria-label="breadcrumb mt-2">
+          <nav aria-label="breadcrumb mt-2" data-aos="fade-right">
             <li
               className="breadcrumb py-4 d-flex "
               style={{ listStyle: "none" }}
@@ -33,7 +43,7 @@ updateCartItem(itemId,newQty)
           </div>
         </div>
         <div className="row d-flex ">
-        <div className="col-md-8 mb-2 p-4 motion-preset-slide-right motion-delay-500">
+        <div className="col-md-8 mb-2 p-4 motion-preset-slide-right motion-delay-500" data-aos="fade-right">
             <h2 className="border-bottom pb-3">Cart</h2>
 
             <table className="table">
@@ -70,7 +80,7 @@ updateCartItem(itemId,newQty)
                         </td>
                         <td valign="middle">
 
-                        <button onClick={()=>deleteCartItem(item.id)}><i className="bi bi-trash"></i></button>
+                        <button className="bg-white " style={{ outline: 'none',border:'none' }}  onClick={()=>deleteCartItem(item.id)}><i className="bi bi-trash text-danger "></i></button>
                         </td>
                     </tr>
                     ))
@@ -88,7 +98,7 @@ updateCartItem(itemId,newQty)
         {
                     cartData.length>0 &&
                     
-                    <div className="col-md-4 mb-2 p-4 mt-5  motion-preset-slide-left motion-delay-500"> 
+                    <div className="col-md-4 mb-2 p-4 mt-5  motion-preset-slide-left motion-delay-500" data-aos="fade-left"> 
            
                     <div className="border   p-4">
                     <div className="mb-3 d-flex h3"><strong>Proceed To Checkout</strong></div>
