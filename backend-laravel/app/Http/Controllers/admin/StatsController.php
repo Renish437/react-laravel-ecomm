@@ -92,7 +92,7 @@ class StatsController extends Controller
             DB::raw('COUNT(*) as total')
         )
             ->groupBy('category_id')
-            ->with('category:id,name') // assumes Product belongsTo Category
+            ->with('category:id,name') 
             ->get()
             ->map(fn($item) => [
                 'label' => $item->category->name ?? 'Uncategorized',
@@ -105,7 +105,7 @@ class StatsController extends Controller
             DB::raw('COUNT(*) as total')
         )
             ->groupBy('brand_id')
-            ->with('brand:id,name') // assumes Product belongsTo Brand
+            ->with('brand:id,name') 
             ->get()
             ->map(fn($item) => [
                 'label' => $item->brand->name ?? 'No Brand',
@@ -155,37 +155,49 @@ public function orderByCategory(): JsonResponse
 }
 
 /**
- * 📊 Orders by Product Chart
+ *  Orders by Product Chart
  */
 public function orderByProduct(): JsonResponse
 {
-    $data = Product::with('orderItems')->get()->map(function ($product) {
-        $totalSold = $product->orderItems->sum('qty');
-        $revenue = $product->orderItems->sum(function ($item) {
-            return $item->price * $item->qty;
-        });
+    $data = Product::with('orderItems')
+        ->get()
+        ->map(function ($product) {
+            $totalSold = $product->orderItems->sum('qty');
+            $revenue = $product->orderItems->sum(fn($item) => $item->price * $item->qty);
 
-        // Use the first orderItem name as fallback if product name is empty
-        $label = $product->name;
-        if (!$label && $product->orderItems->count() > 0) {
-            $label = $product->orderItems->first()->name;
-        }
+            
+            $label = trim($product->title?? '');
 
-        return [
-            'label' => $label ?? 'Unnamed Product',
-            'total_sold' => $totalSold,
-            'revenue' => $revenue,
-        ];
-    })
-    ->sortByDesc('total_sold')
-    ->take(10)
-    ->values();
+          
+            if ($label === '' && $product->orderItems->isNotEmpty()) {
+                $label = trim($product->orderItems->first()->name ?? '');
+            }
+
+            
+            if ($label === '') {
+                $label = 'Unnamed Product';
+            }
+
+            return [
+                'label' => $label,
+                'total_sold' => $totalSold,
+                'revenue' => $revenue,
+            ];
+        })
+       
+        ->sortByDesc('total_sold')
+        ->take(10)
+        ->values();
 
     return response()->json([
         'status' => 200,
         'data' => $data,
     ]);
 }
+
+
+
+
 
 
 
