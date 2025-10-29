@@ -75,7 +75,7 @@ useEffect(() => {
                   {order.status === 'delivered' && <span className="badge bg-success">Delivered</span>}
                   {order.status === 'cancelled' && <span className="badge bg-danger">Cancelled</span>}
                 </p>
-                <p><strong>Payment Method:</strong> COD</p>
+                <p><strong>Payment Method:</strong> {order.payment_method=='stripe'? <span className="badge bg-dark">Stripe</span> : <span className="badge bg-warning">COD</span>  }</p>
               </div>
               <div className="col-6">
                 <p><strong>Customer:</strong> {order.name || 'N/A'}</p>

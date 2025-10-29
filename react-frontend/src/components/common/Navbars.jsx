@@ -110,7 +110,7 @@ const Navbars = () => {
                   Shop
                 </Link>
 
-                <Link
+                {/* <Link
                   className="nav-link fw-medium text-dark d-flex align-items-center"
                   to="/contact"
                   data-aos="fade-left"
@@ -118,7 +118,7 @@ const Navbars = () => {
                 >
                   <Phone size={18} className="me-1" />
                   Contact
-                </Link>
+                </Link> */}
 
                 {/* Dynamic Categories */}
                 {categories.map((category, index) => (

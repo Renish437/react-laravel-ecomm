@@ -70,7 +70,7 @@ const ShowProduct = () => {
     fetchProducts();
   }, []);
   return (
-    <div className="container">
+    <div className="container mb-3">
       <div className="row">
         <div className="d-flex justify-content-between mt-5 pb-3">
           <h4 className="h4 pb-0 mb-0">Products</h4>

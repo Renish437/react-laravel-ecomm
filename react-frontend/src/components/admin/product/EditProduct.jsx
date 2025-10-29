@@ -527,9 +527,7 @@ const EditProduct = ({ placeholder }) => {
                   )}
                 </div>
                 <div className="mb-3">
-                  <label htmlFor="" className="form-label">
-                    Ports
-                  </label>
+                 <h3 className="py-3 border-bottom mb-3"> Colors</h3>
                   {port &&
                     port.map((port, index) => {
                       return (
@@ -539,7 +537,7 @@ const EditProduct = ({ placeholder }) => {
                         >
                           <input
                             {...register("ports")}
-                            className="form-check-input "
+                            className=" "
                             checked={portsChecked.includes(port.id)}
                             onChange={(e) => {
                               if (e.target.checked) {

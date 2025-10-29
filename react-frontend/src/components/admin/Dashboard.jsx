@@ -51,40 +51,7 @@ const fetchStats = async () => {
   }
 };
 
-// --- Fetch Orders Overview Chart ---
-const fetchOrderChart = async (type = "monthly") => {
-  try {
-    const res = await fetch(`${apiUrl}/order-chart?filter=${type}`, {
-      headers: { Authorization: `Bearer ${adminToken()}` },
-    });
-    const data = await res.json();
 
-    if (data.status === 200 && Array.isArray(data.data)) {
-      const labels = data.data.map((item) => item.label ?? item.month ?? "N/A");
-      const totals = data.data.map((item) => Number(item.total ?? item.count ?? 0));
-
-      setOrderChart({
-        labels,
-        datasets: [
-          {
-            label: "Orders",
-            data: totals,
-            borderColor: "#36A2EB",
-            backgroundColor: "rgba(54, 162, 235, 0.2)",
-            pointBackgroundColor: "#36A2EB",
-            borderWidth: 2,
-            tension: 0.3,
-            fill: true,
-          },
-        ],
-      });
-    } else {
-      setOrderChart(null);
-    }
-  } catch (err) {
-    console.error("Error fetching order chart:", err);
-  }
-};
 
 // --- Fetch Product Chart (Pie) ---
 const fetchProductChart = async () => {
@@ -151,7 +118,10 @@ const fetchOrderByProduct = async () => {
     });
     const data = await res.json();
     if (data.status === 200 && data.data.length > 0) {
-      const labels = data.data.map((item) => item.label?.trim() || "Unknown Product");
+     const labels = data.data.map((item) => item.label?.trim() || "Unknown Product here");
+       // ✅ Use label directly from backend (which already handles name logic)
+ 
+ 
       const totals = data.data.map((item) => Number(item.total_sold ?? 0));
       setOrderByProductChart({
         labels,
@@ -188,9 +158,7 @@ useEffect(() => {
 }, []);
 
 // --- Fetch orders chart whenever filter changes ---
-useEffect(() => {
-  fetchOrderChart(filter);
-}, [filter]);
+
 
 
 
@@ -208,7 +176,7 @@ useEffect(() => {
         <div className="col-md-9">
           {loading ? (
             <div className="text-center py-5">
-              <div className="spinner-border text-primary" role="status"></div>
+              <div className="spinner-border primary-text" role="status"></div>
             </div>
           ) : (
             <>
@@ -232,7 +200,7 @@ useEffect(() => {
               {/* Charts */}
               <div className="row">
                 {/* Products by Category */}
-                <div className="col-md-6 mb-4">
+                <div className="col-md-6 ">
                   <div className="card shadow p-3">
                     <h5 className="mb-3 text-center">Products by Category</h5>
                     {productChart ? (
@@ -249,7 +217,7 @@ useEffect(() => {
                 </div>
 
                 {/* Orders by Category */}
-                <div className="col-md-6 mb-4">
+                <div className="col-md-6 mb-3 ">
                   <div className="card shadow p-3">
                     <h5 className="mb-3 text-center">Orders by Category</h5>
                     {orderByCategoryChart ? (
@@ -261,7 +229,7 @@ useEffect(() => {
                           plugins: { legend: { position: "bottom" } },
                           scales: { y: { beginAtZero: true } },
                         }}
-                        height={270}
+                        height={300}
                       />
                     ) : (
                       <p className="text-center">No data available</p>
@@ -269,40 +237,11 @@ useEffect(() => {
                   </div>
                 </div>
 
-{/* <div className="col-md-4 mb-4">
-  <div className="card shadow p-3" style={{ minHeight: "350px" }}>
-    <div className="d-flex justify-content-between align-items-center mb-2">
-      <h5 className="m-0">Orders Overview</h5>
-      <select
-        className="form-select w-auto"
-        value={filter}
-        onChange={(e) => setFilter(e.target.value)}
-      >
-        <option value="weekly">Weekly</option>
-        <option value="monthly">Monthly</option>
-        <option value="yearly">Yearly</option>
-      </select>
-    </div>
-    {orderChart ? (
-      <Line
-        data={orderChart}
-        options={{
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: { legend: { position: "bottom" }, tooltip: { enabled: true } },
-          scales: { y: { beginAtZero: true } },
-        }}
-        style={{ height: "100%" }}
-      />
-    ) : (
-      <p className="text-center">No data available</p>
-    )}
-  </div>
-</div> */}
+
 
 
                 {/* Top Selling Products */}
-                <div className="col-md-12 mb-4">
+                <div className="col-md-12 ">
                   <div className="card shadow p-3">
                     <h5 className="mb-3 text-center">Top Selling Products</h5>
                     {orderByProductChart ? (
@@ -314,7 +253,7 @@ useEffect(() => {
                           plugins: { legend: { position: "bottom" } },
                           scales: { y: { beginAtZero: true } },
                         }}
-                        height={200}
+                        height={300}
                       />
                     ) : (
                       <p className="text-center">No data available</p>

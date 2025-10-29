@@ -83,6 +83,15 @@ input[type="checkbox"] {
     border-radius: 2px;
   accent-color: #7c3aed; /* your custom color */
 }
+.form-check-inline{
+
+input[type="checkbox"] {
+    width:  1rem;
+    height:  1rem;
+    border-radius: 2px;
+  accent-color: #7c3aed; /* your custom color */
+}
+}
 i{
     font-size: 1.2rem;
  
@@ -124,6 +133,7 @@ ul{
 .container{
 
     max-width: 1440px;
+    width: 95%;
     margin: 0 auto;
 }
 

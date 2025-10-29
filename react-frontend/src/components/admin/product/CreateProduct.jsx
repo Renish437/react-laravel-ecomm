@@ -451,18 +451,18 @@ const CreateProduct = ({ placeholder }) => {
                     </p>
                   )}
                 </div>
-                <h3 className="py-3 border-bottom mb-3">  Ports</h3>
+                <h3 className="py-3 border-bottom mb-3"> Colors</h3>
                 <div className="mb-3">
                  
                   {
                       port && port.map((port,index)=>{
                       return(
-                        <div className="form-check-inline ps-2" key={`ports-${index}`}>
+                        <div className=" form-check-inline ps-2" key={`ports-${index}`}>
                         <input 
                         {
                           ...register('ports')
                         }
-                         className="form-check-input "
+                         className=""
                          checked={portsChecked.includes(port.id)}
                          onChange={(e)=>{
                           if(e.target.checked){

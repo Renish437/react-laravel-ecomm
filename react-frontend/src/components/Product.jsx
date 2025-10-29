@@ -165,7 +165,7 @@ const Product = () => {
                       <img
                         src={product_image.image_url}
                         alt=""
-                        height={400}
+                        height={450}
                         className="w-100"
                       />
                     </div>
