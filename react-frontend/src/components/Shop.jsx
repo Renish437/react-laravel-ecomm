@@ -1,261 +1,269 @@
-import React, { useEffect, useState } from 'react'
-import { Link, useSearchParams } from 'react-router-dom'
-import ProductImg1 from "../assets/images/eleven.jpg"
-import { apiUrl } from './common/Http';
-import { Pagination } from 'react-bootstrap';
-import { set } from 'react-hook-form';
-import Loader from './common/Loader/Loader';
-import Aos from 'aos';
-
+import React, { useEffect, useState, useRef } from "react";
+import { Link, useSearchParams } from "react-router-dom";
+import { apiUrl } from "./common/Http";
+import { Pagination } from "react-bootstrap";
+import Loader from "./common/Loader/Loader";
+import Aos from "aos";
 
 const Shop = () => {
-  const [loading,setLoading]=useState(true);
-  const [categories,setCategories]=useState([]);
-  const [brands,setBrands]=useState([]);
-  const [products,setProducts]=useState([]);
-  const [searchParams,setSearchParams]=useSearchParams();
-  const [catChecked,setCatChecked]=useState(()=>{
-    const category=searchParams.get('category');
-    return category ? category.split(','):[];
+  const [loading, setLoading] = useState(true);
+  const [fetchingProducts, setFetchingProducts] = useState(false); // 👈 separate product loader
+  const [categories, setCategories] = useState([]);
+  const [brands, setBrands] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const debounceTimeout = useRef(null); // 👈 debounce ref
+
+  // Initialize category and brand selections from URL
+  const [catChecked, setCatChecked] = useState(() => {
+    const category = searchParams.get("category");
+    return category ? category.split(",") : [];
   });
-  const [brandChecked,setBrandChecked]=useState(()=>{
-    const brand=searchParams.get('brand');
-    return brand ? brand.split(','):[];
+
+  const [brandChecked, setBrandChecked] = useState(() => {
+    const brand = searchParams.get("brand");
+    return brand ? brand.split(",") : [];
   });
 
-
-  const fetchCategories=async()=>{
-    await fetch(apiUrl+'/get-categories',{
-          method:'GET',
-          headers:{
-            'Content-type':'application/json',
-            'Accept':'application/json',
-          }
-        }).then(res=>res.json())
-        .then(result=>{
-          if(result.status==200){
-          
-            setCategories(result.data);
-            setLoading(false);
-            console.log(result.data);
-            
-          }
-          else{
-            setLoading(false);
-            console.log('Something went wrong');
-            
-          }
-          
-        })
-  }
-  const fetchBrands=async()=>{
-    await fetch(apiUrl+'/get-brands',{
-          method:'GET',
-          headers:{
-            'Content-type':'application/json',
-            'Accept':'application/json',
-          }
-        }).then(res=>res.json())
-        .then(result=>{
-          if(result.status==200){
-            
-            setBrands(result.data);
-            setLoading(false);
-            console.log(result.data);
-            
-          }
-          else{
-            console.log('Something went wrong');
-            
-          }
-          
-        })
-  }
-  const fetchProducts=async()=>{
-    // console.log(catChecked);
-
-    let search=[]
-    let params='';
-    if(catChecked.length>0){
-      search.push(['category',catChecked])
+  // ✅ Fetch Categories
+  const fetchCategories = async () => {
+    try {
+      const res = await fetch(apiUrl + "/get-categories");
+      const result = await res.json();
+      if (result.status === 200) setCategories(result.data);
+    } catch (error) {
+      console.error("Fetch categories error:", error);
+    } finally {
+      setLoading(false);
     }
-    if(brandChecked.length>0){
-      search.push(['brand',brandChecked])
-    }
-    if(search.length>0){
-      params= new URLSearchParams(search)
-      setSearchParams(params)
-    } else{
-      setSearchParams([]);
-    }
+  };
 
-  
-    await fetch(apiUrl+`/get-products?${params}`,{
-          method:'GET',
-          headers:{
-            'Content-type':'application/json',
-            'Accept':'application/json',
-          }
-        }).then(res=>res.json())
-        .then(result=>{
-          if(result.status==200){
-            setProducts(result.data);
-            setLoading(false);
-            console.log(result.data);
-            
-          }
-          else{
-            console.log('Something went wrong');
-            
-          }
-          
-        })
-  }
+  // ✅ Fetch Brands
+  const fetchBrands = async () => {
+    try {
+      const res = await fetch(apiUrl + "/get-brands");
+      const result = await res.json();
+      if (result.status === 200) setBrands(result.data);
+    } catch (error) {
+      console.error("Fetch brands error:", error);
+    }
+  };
 
-  const handleCategory=(e)=>{
-      const {checked, value}=e.target;
-      if(checked){
-        setCatChecked(pre=>[...pre,value])
+  // ✅ Fetch Products with Filters
+  const fetchProducts = async () => {
+    setFetchingProducts(true);
+
+    const params = new URLSearchParams();
+    if (catChecked.length > 0) params.append("category", catChecked.join(","));
+    if (brandChecked.length > 0) params.append("brand", brandChecked.join(","));
+    setSearchParams(params);
+
+    try {
+      const res = await fetch(apiUrl + `/get-products?${params.toString()}`);
+      const result = await res.json();
+      if (result.status === 200) {
+        // small delay for smoothness
+        setTimeout(() => {
+          setProducts(result.data);
+          setFetchingProducts(false);
+        }, 200);
+      } else {
+        setProducts([]);
+        setFetchingProducts(false);
       }
-      else{
-        setCatChecked(catChecked.filter(id=>id!=value))
-      }
-  }
-  const handleBrand=(e)=>{
-      const {checked, value}=e.target;
-      if(checked){
-        setBrandChecked(pre=>[...pre,value])
-      }
-      else{
-        setBrandChecked(catChecked.filter(id=>id!=value))
-      }
-  }
-  
-  useEffect(()=>{
+    } catch (error) {
+      console.error("Fetch products error:", error);
+      setFetchingProducts(false);
+    }
+  };
+
+  // ✅ Handle Category Filter
+  const handleCategory = (e) => {
+    const { checked, value } = e.target;
+    setCatChecked((prev) =>
+      checked ? [...prev, value] : prev.filter((id) => id !== value)
+    );
+  };
+
+  // ✅ Handle Brand Filter
+  const handleBrand = (e) => {
+    const { checked, value } = e.target;
+    setBrandChecked((prev) =>
+      checked ? [...prev, value] : prev.filter((id) => id !== value)
+    );
+  };
+
+  // ✅ Debounced Fetch for Smooth Filtering
+  useEffect(() => {
+    if (debounceTimeout.current) clearTimeout(debounceTimeout.current);
+    debounceTimeout.current = setTimeout(() => {
+      fetchProducts();
+    }, 400); // 👈 small delay makes UI feel fluid
+  }, [catChecked, brandChecked]);
+
+  // ✅ Initial Data Load
+  useEffect(() => {
     fetchCategories();
     fetchBrands();
     fetchProducts();
-  },[catChecked,brandChecked])
+    Aos.init({
+      duration: 800,
+      easing: "ease-in-out",
+      once: true,
+      offset: 100,
+    });
+  }, []);
 
-    useEffect(() => {
-      fetchCategories();
-      Aos.init({
-        duration: 800,
-        easing: 'ease-in-out',
-        once: true,
-        offset: 100,
-      });
-    }, []);
-    return (
+  return (
     <div>
       <div className="container">
-      <nav aria-label="breadcrumb mt-3" data-aos="fade-right">
-  <li  style={{ listStyle:'none' }} className='py-4 d-flex  breadcrumb'>
-    <li className="breadcrumb-item" ><Link to={'/'}>Home</Link></li>
-    <li className="breadcrumb-item active" aria-current="page">Shop</li>
-  </li>
-</nav>
-<div className="row ">
-  <div className="col-md-3">
-    <div className="card shadow border-0 mb-3" data-aos="fade-right">
-      <div className="card-body motion-preset-slide-right motion-delay-500">
-        <h3 className='mb-3'>Categories</h3>
-    {
-      loading==true && <Loader/>
-    }
-    {
-      loading==false &&     <ul>
-      {
-        categories && categories.map(category=>{
-          return(
-            <li key={`cat-${category.id}`} className='mb-2'>
-            <input id={`check-category-${category.id}`} type="checkbox"
-            defaultChecked={searchParams.get('category')? searchParams.get('category').includes(category.id):false}
-             value={category.id} onClick={handleCategory} name="" />
-            <label htmlFor={`check-category-${category.id}`} className='ps-2'>{category.name}</label>
+        {/* Breadcrumb */}
+        <nav aria-label="breadcrumb mt-3" data-aos="fade-right">
+          <li style={{ listStyle: "none" }} className="py-4 d-flex breadcrumb">
+            <li className="breadcrumb-item">
+              <Link to={"/"}>Home</Link>
+            </li>
+            <li className="breadcrumb-item active" aria-current="page">
+              Shop
+            </li>
           </li>
-          )
-        })
-      }
-     
-     
-    </ul>
-    }
-      </div>
-    </div>
-    <div className="card shadow border-0 mb-3" data-aos="fade-right">
-      <div className="card-body motion-preset-slide-right motion-delay-500">
-        <h3 className='mb-3'>Brands</h3>
-        {
-      loading==true && <Loader/>
-    }
-    {
-      loading==false &&
-      <ul>
-        {
-            brands && brands.map(brand=>{
-              return(
-                <li key={`brand-${brand.id}`} className='mb-2'>
-                <input id={`check-brand-${brand.id}`} type="checkbox"
-                defaultChecked={searchParams.get('brand')? searchParams.get('brand').includes(brand.id):false}
-                 value={brand.id} onClick={handleBrand} name=""  />
-                <label htmlFor={`check-brand-${brand.id}`} className='ps-2'>{brand.name}</label>
-              </li>
-              )
-            })
-          }
-         
-        </ul>
-    }
-        
-      </div>
-    </div>
-  </div>
+        </nav>
 
+        <div className="row">
+          {/* Sidebar Filters */}
+          <div className="col-md-3">
+            {/* Categories */}
+            <div className="card shadow border-0 mb-3" data-aos="fade-right">
+              <div className="card-body">
+                <h3 className="mb-3">Categories</h3>
+                {loading && <Loader />}
+                {!loading && (
+                  <ul>
+                    {categories.map((category) => (
+                      <li key={`cat-${category.id}`} className="mb-2">
+                        <input
+                          id={`check-category-${category.id}`}
+                          type="checkbox"
+                          checked={catChecked.includes(category.id.toString())}
+                          value={category.id}
+                          onChange={handleCategory}
+                        />
+                        <label
+                          htmlFor={`check-category-${category.id}`}
+                          className="ps-2"
+                        >
+                          {category.name}
+                        </label>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            </div>
 
-
-  <div className="col-md-9 motion-preset-slide-up motion-delay-500" data-aos="fade-up">
-  {
-  loading==true && <Loader/>
-}
-{
-  loading==false && <div className="row pb-4">
-  {
-    products && products.map(product=>{
-      return(
-        <div key={`product-${product.id}`} className="col-md-4 col-6 hover:scale-[1.02] duration-500 hover:cursor-pointer">
-        <div className="product card border-0">
-          <div className="card-img">
-          <Link to={`/product/${product.id}`} className='link'> <img src={product.image_url} alt="" className='w-100' /></Link>
-          </div>
-          <div className="card-body pt-3">
-            <Link to={`/product/${product.id}`} className='link  line-clamp-1'>{product.title}</Link>
-            <div className="price">
-            $ {product.price} &nbsp; 
-                    {
-                      product.compare_price && <span className='text-decoration-line-through'>${ product.compare_price }</span>
-                    }
+            {/* Brands */}
+            <div className="card shadow border-0 mb-3" data-aos="fade-right">
+              <div className="card-body">
+                <h3 className="mb-3">Brands</h3>
+                {loading && <Loader />}
+                {!loading && (
+                  <ul>
+                    {brands.map((brand) => (
+                      <li key={`brand-${brand.id}`} className="mb-2">
+                        <input
+                          id={`check-brand-${brand.id}`}
+                          type="checkbox"
+                          checked={brandChecked.includes(brand.id.toString())}
+                          value={brand.id}
+                          onChange={handleBrand}
+                        />
+                        <label
+                          htmlFor={`check-brand-${brand.id}`}
+                          className="ps-2"
+                        >
+                          {brand.name}
+                        </label>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
             </div>
           </div>
 
+          {/* Products */}
+          <div
+            className="col-md-9 position-relative motion-preset-slide-up motion-delay-500"
+            data-aos="fade-up"
+          >
+            {/* Overlay shimmer loader */}
+            {fetchingProducts && (
+              <div
+                style={{
+                  position: "absolute",
+                  inset: 0,
+                  background: "rgba(255,255,255,0.7)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  backdropFilter: "blur(3px)",
+                  zIndex: 5,
+                  transition: "opacity 0.3s ease",
+                }}
+              >
+                <Loader />
+              </div>
+            )}
+
+            {!loading && (
+              <div className="row pb-4">
+                {products.length > 0 ? (
+                  products.map((product) => (
+                    <div
+                      key={`product-${product.id}`}
+                      className="col-md-4 col-6 hover:scale-[1.02] duration-500 hover:cursor-pointer"
+                    >
+                      <div className="product card border-0">
+                        <div className="card-img">
+                          <Link to={`/product/${product.id}`} className="link">
+                            <img
+                              src={product.image_url}
+                              alt={product.title}
+                              className="w-100"
+                            />
+                          </Link>
+                        </div>
+                        <div className="card-body pt-3">
+                          <Link
+                            to={`/product/${product.id}`}
+                            className="link line-clamp-1"
+                          >
+                            {product.title}
+                          </Link>
+                          <div className="price">
+                            $ {product.price} &nbsp;
+                            {product.compare_price && (
+                              <span className="text-decoration-line-through">
+                                Rs {product.compare_price}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <p>No products found.</p>
+                )}
+              </div>
+            )}
+
+            <Pagination />
+          </div>
         </div>
       </div>
-      )
-    })
-  }
-
-
-   
-</div>
-}
-    
-    <Pagination/>
-  </div>
-</div>
-
-      </div>
     </div>
-  )
-}
+  );
+};
 
-export default Shop
+export default Shop;
