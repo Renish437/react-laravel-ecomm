@@ -7,12 +7,12 @@ import Aos from "aos";
 
 const Shop = () => {
   const [loading, setLoading] = useState(true);
-  const [fetchingProducts, setFetchingProducts] = useState(false); // 👈 separate product loader
+  const [fetchingProducts, setFetchingProducts] = useState(false); 
   const [categories, setCategories] = useState([]);
   const [brands, setBrands] = useState([]);
   const [products, setProducts] = useState([]);
   const [searchParams, setSearchParams] = useSearchParams();
-  const debounceTimeout = useRef(null); // 👈 debounce ref
+  const debounceTimeout = useRef(null); 
 
   // Initialize category and brand selections from URL
   const [catChecked, setCatChecked] = useState(() => {
@@ -25,7 +25,7 @@ const Shop = () => {
     return brand ? brand.split(",") : [];
   });
 
-  // ✅ Fetch Categories
+
   const fetchCategories = async () => {
     try {
       const res = await fetch(apiUrl + "/get-categories");
@@ -38,7 +38,7 @@ const Shop = () => {
     }
   };
 
-  // ✅ Fetch Brands
+
   const fetchBrands = async () => {
     try {
       const res = await fetch(apiUrl + "/get-brands");
@@ -49,7 +49,7 @@ const Shop = () => {
     }
   };
 
-  // ✅ Fetch Products with Filters
+
   const fetchProducts = async () => {
     setFetchingProducts(true);
 
@@ -62,7 +62,7 @@ const Shop = () => {
       const res = await fetch(apiUrl + `/get-products?${params.toString()}`);
       const result = await res.json();
       if (result.status === 200) {
-        // small delay for smoothness
+       
         setTimeout(() => {
           setProducts(result.data);
           setFetchingProducts(false);
@@ -77,7 +77,7 @@ const Shop = () => {
     }
   };
 
-  // ✅ Handle Category Filter
+
   const handleCategory = (e) => {
     const { checked, value } = e.target;
     setCatChecked((prev) =>
@@ -85,7 +85,7 @@ const Shop = () => {
     );
   };
 
-  // ✅ Handle Brand Filter
+
   const handleBrand = (e) => {
     const { checked, value } = e.target;
     setBrandChecked((prev) =>
@@ -93,15 +93,15 @@ const Shop = () => {
     );
   };
 
-  // ✅ Debounced Fetch for Smooth Filtering
+
   useEffect(() => {
     if (debounceTimeout.current) clearTimeout(debounceTimeout.current);
     debounceTimeout.current = setTimeout(() => {
       fetchProducts();
-    }, 400); // 👈 small delay makes UI feel fluid
+    }, 400); 
   }, [catChecked, brandChecked]);
 
-  // ✅ Initial Data Load
+
   useEffect(() => {
     fetchCategories();
     fetchBrands();
