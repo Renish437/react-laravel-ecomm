@@ -32,22 +32,22 @@ const CreateProduct = ({ placeholder }) => {
     formState: { errors },
   } = useForm();
 
-    const fetchPorts = async () => {
-        const res = await fetch(apiUrl + "/ports", {
-          method: "GET",
-          headers: {
-            "Content-type": "application/json",
-            Accept: "application/json",
-            Authorization: `Bearer ${adminToken()}`,
-          },
-        })
-          .then((res) => res.json())
-          .then((result) => {
-            console.log(result);
-    
-            setPort(result.data);
-          });
-      };
+  const fetchPorts = async () => {
+    const res = await fetch(apiUrl + "/ports", {
+      method: "GET",
+      headers: {
+        "Content-type": "application/json",
+        Accept: "application/json",
+        Authorization: `Bearer ${adminToken()}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((result) => {
+        console.log(result);
+
+        setPort(result.data);
+      });
+  };
 
   const saveProduct = async (data) => {
     // setDisable(true);
@@ -120,7 +120,7 @@ const CreateProduct = ({ placeholder }) => {
       method: "POST",
       headers: {
         Accept: "application/json",
-      
+
         Authorization: `Bearer ${adminToken()}`,
       },
       body: formData,
@@ -143,19 +143,17 @@ const CreateProduct = ({ placeholder }) => {
             result.data
           );
         }
-              
-              
+
         if (result.status === 400) {
           // Safely handle errors
           // const errorMessage = Array.isArray(result.message.image)
           //   ? result.message.image[0] // Get the first error message
           //   : "An unknown error occurred"; // Fallback message
-          const errorMessage=result.message.image[0]
+          const errorMessage = result.message.image[0];
 
           console.log(result.message);
           toast.error(errorMessage); // Display the error in a toast
           console.log(errorMessage);
-          
         } else {
           toast.success(result.message || "Image added successfully!");
         }
@@ -169,7 +167,6 @@ const CreateProduct = ({ placeholder }) => {
     setGalleryImages(newGallery);
   };
 
- 
   useEffect(() => {
     fetchCategories();
     fetchBrands();
@@ -392,13 +389,25 @@ const CreateProduct = ({ placeholder }) => {
                         Qty
                       </label>
                       <input
-                        type="text"
+                        type="number"
                         {...register("qty", {
                           required: "The quantity field is required",
+                          min: {
+                            value: 1,
+                            message: "Quantity cannot be negative or zero",
+                          },
                         })}
                         placeholder="Qty"
-                        className={`form-control ${errors.qty && "is-invalid"}`}
+                        className={`form-control ${
+                          errors.qty ? "is-invalid" : ""
+                        }`}
                       />
+                      {errors.qty && (
+                        <div className="invalid-feedback">
+                          {errors.qty.message}
+                        </div>
+                      )}
+
                       {errors.qty && (
                         <p className="invalid-feedback">{errors.qty.message}</p>
                       )}
@@ -453,34 +462,39 @@ const CreateProduct = ({ placeholder }) => {
                 </div>
                 <h3 className="py-3 border-bottom mb-3"> Colors</h3>
                 <div className="mb-3">
-                 
-                  {
-                      port && port.map((port,index)=>{
-                      return(
-                        <div className=" form-check-inline ps-2" key={`ports-${index}`}>
-                        <input 
-                        {
-                          ...register('ports')
-                        }
-                         className=""
-                         checked={portsChecked.includes(port.id)}
-                         onChange={(e)=>{
-                          if(e.target.checked){
-                            setPortsChecked([...portsChecked,port.id]);
-                          }
-                          else{
-                            setPortsChecked(portsChecked.filter(pid=>port.id!=pid));
-                          }
-                         }}
-                          type="checkbox" value={port.id} id={`port-${port.id}`}/>
-                        <label className="form-check-label ps-2" htmlFor={`port-${port.id}`}>
-                          {port.name}
-                        </label>
-                      </div>
-                      )
-                    })
-                  }
-               
+                  {port &&
+                    port.map((port, index) => {
+                      return (
+                        <div
+                          className=" form-check-inline ps-2"
+                          key={`ports-${index}`}
+                        >
+                          <input
+                            {...register("ports")}
+                            className=""
+                            checked={portsChecked.includes(port.id)}
+                            onChange={(e) => {
+                              if (e.target.checked) {
+                                setPortsChecked([...portsChecked, port.id]);
+                              } else {
+                                setPortsChecked(
+                                  portsChecked.filter((pid) => port.id != pid)
+                                );
+                              }
+                            }}
+                            type="checkbox"
+                            value={port.id}
+                            id={`port-${port.id}`}
+                          />
+                          <label
+                            className="form-check-label ps-2"
+                            htmlFor={`port-${port.id}`}
+                          >
+                            {port.name}
+                          </label>
+                        </div>
+                      );
+                    })}
                 </div>
                 <h3 className="py-3 border-bottom mb-3">Gallery</h3>
                 <div className="mb-3">
