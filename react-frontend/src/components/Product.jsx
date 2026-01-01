@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Thumbs, FreeMode, Navigation } from "swiper/modules";
 import "swiper/css";
@@ -12,7 +12,7 @@ import ProductImgThree from '../assets/images/Mens/seven.jpg';
 import { Rating } from 'react-simple-star-rating'
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
-import { apiUrl } from "./common/Http";
+import { apiUrl, userToken } from "./common/Http";
 import { CartContext } from "./context/Cart";
 import { toast } from "react-toastify";
 import Pagination from "./Pagination";
@@ -26,7 +26,8 @@ const Product = () => {
   const [productPorts, setProductPorts] = useState([]);
   const [portSelected, setPortSelected] = useState(null);
   const params=useParams();
-  const {addToCart}=useContext(CartContext)
+  const {addToCart}=useContext(CartContext);
+    const navigate = useNavigate();
     const fetchProducts=async()=>{
       await fetch(apiUrl+'/get-product/'+params.id,{
             method:'GET',
@@ -50,20 +51,64 @@ const Product = () => {
             
           })
     }
-    const handleAddToCart=()=>{
-      if(productPorts.length>0){
+  
 
-        if(portSelected==null){
-          toast.warning('Please Select a Color')
-        } else{
-          addToCart(product,portSelected)
-          toast.success('Product successfully added to Cart')
-        }
-      } else{
-        addToCart(product,null)
-        toast.success('Product successfully added to Cart')
-      }
+const handleAddToCart = async () => {
+  if (!userToken()) {
+    toast.warning("Please login to continue");
+    return;
+  }
+
+  // Determine quantity (always 1 from product page)
+  const qty = 1;
+
+  const items = [
+    {
+      product_id: product.id,
+      qty: qty,
+    },
+  ];
+
+  try {
+    const response = await fetch(apiUrl + "/validate-cart", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "Authorization": `Bearer ${userToken()}`,
+      },
+      body: JSON.stringify({ items }),
+    });
+
+    const result = await response.json();
+
+    // ❌ Validation failed (stock = 0 or exceeded)
+    if (result.status !== 200) {
+      result.errors.forEach((error) => {
+        toast.error(error.message);
+      });
+      return;
     }
+
+    // ✅ Validation passed
+    if (productPorts.length > 0) {
+      if (!portSelected) {
+        toast.warning("Please select a size");
+        return;
+      }
+      addToCart(product, portSelected);
+    } else {
+      addToCart(product, null);
+    }
+
+    toast.success("Product added to cart");
+    navigate("/cart");
+
+  } catch (error) {
+    console.error("Cart validation error:", error);
+    toast.error("Something went wrong. Please try again.");
+  }
+};
     useEffect(() => {
       fetchProducts();
     

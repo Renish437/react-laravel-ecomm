@@ -348,7 +348,7 @@ const CreateProduct = ({ placeholder }) => {
                     </div>
                   </div>
                 </div>
-                <h3 className="py-3 border-bottom mb-3">Inventory</h3>
+                {/* <h3 className="py-3 border-bottom mb-3">Inventory</h3>
                 <div className="row">
                   <div className="col-md-6">
                     <div className="mb-3">
@@ -381,7 +381,7 @@ const CreateProduct = ({ placeholder }) => {
                       />
                     </div>
                   </div>
-                </div>
+                </div> */}
                 <div className="row">
                   <div className="col-md-6">
                     <div className="mb-3">
