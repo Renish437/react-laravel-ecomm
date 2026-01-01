@@ -6,16 +6,13 @@ import "swiper/css";
 import "swiper/css/free-mode";
 import "swiper/css/navigation";
 import "swiper/css/thumbs";
-import ProductImgOne from '../assets/images/Mens/five.jpg';
-import ProductImgTwo from '../assets/images/Mens/six.jpg';
-import ProductImgThree from '../assets/images/Mens/seven.jpg';
-import { Rating } from 'react-simple-star-rating'
+
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 import { apiUrl, userToken } from "./common/Http";
 import { CartContext } from "./context/Cart";
 import { toast } from "react-toastify";
-import Pagination from "./Pagination";
+
 import ReactStars from "react-rating-stars-component";
 import Aos from "aos";
 const Product = () => {

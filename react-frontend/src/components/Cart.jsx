@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import ProductImg from "../assets/images/Mens/six.jpg";
+
 import { CartContext } from "./context/Cart";
 import Aos from "aos";
 import { toast } from "react-toastify";
