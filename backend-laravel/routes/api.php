@@ -40,6 +40,7 @@ Route::group(['middleware' => ['auth:sanctum', 'checkUserRole']], function () {
 
     Route::get('get-profile-details', [AccountController::class, 'getUserDetails']);
     Route::post('update-profile', [AccountController::class, 'updateProfile']);
+    Route::post('/validate-cart', [ProductController::class, 'validateCart']);
 });
 
 
@@ -66,6 +67,7 @@ Route::get('/order-by-product', [StatsController::class, 'orderByProduct']);
     Route::resource('categories', CategoryController::class);
     Route::resource('brands', BrandController::class);
     Route::resource('products', ProductController::class);
+
     // Route::get('ports',[PortController::class,'index']);
     Route::apiResource('ports', PortController::class);
     Route::post('temp-images', [TempImageController::class, 'store']);
