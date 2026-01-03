@@ -5,6 +5,7 @@ import { CartContext } from "./context/Cart";
 import Aos from "aos";
 import { toast } from "react-toastify";
 import { apiUrl, userToken } from "./common/Http";
+import { AuthContext } from "./context/Auth";
 
 const Cart = () => {
   const {
@@ -17,6 +18,7 @@ const Cart = () => {
   } = useContext(CartContext);
   const [qty, setQty] = useState({});
   const navigate = useNavigate();
+   const { user, isLoggedIn } = useContext(AuthContext);
 const handleQtyChange = (e, item) => {
   let value = e.target.value;
 
@@ -69,6 +71,10 @@ const handleQtyKeyDown = (e, item) => {
 
 
   const handleCheckout = () => {
+      if (!isLoggedIn()) {
+        toast.warning("Please login to continue");
+        return;
+      }
     const items = cartData.map(item => ({
       product_id: item.product_id,
       qty: qty[item.id] || item.qty

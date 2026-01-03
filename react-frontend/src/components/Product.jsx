@@ -15,6 +15,7 @@ import { toast } from "react-toastify";
 
 import ReactStars from "react-rating-stars-component";
 import Aos from "aos";
+import { AuthContext } from "./context/Auth";
 const Product = () => {
   const [thumbsSwiper, setThumbsSwiper] = useState(null);
   const [rating, setRating] = useState(4);
@@ -24,6 +25,8 @@ const Product = () => {
   const [portSelected, setPortSelected] = useState(null);
   const params=useParams();
   const {addToCart}=useContext(CartContext);
+ const { user, isLoggedIn } = useContext(AuthContext);
+
     const navigate = useNavigate();
     const fetchProducts=async()=>{
       await fetch(apiUrl+'/get-product/'+params.id,{
@@ -51,7 +54,7 @@ const Product = () => {
   
 
 const handleAddToCart = async () => {
-  if (!userToken()) {
+  if (!isLoggedIn()) {
     toast.warning("Please login to continue");
     return;
   }
